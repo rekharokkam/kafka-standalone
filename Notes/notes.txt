@@ -1,0 +1,130 @@
+brew services start zookeeper
+
+brew services start kafka
+
+
+To have launchd start zookeeper now and restart at login:
+  brew services start zookeeper
+Or, if you don't want/need a background service you can just run:
+  zkServer start
+==> Summary
+🍺  /usr/local/Cellar/zookeeper/3.7.0: 1,073 files, 42.4MB
+==> Installing kafka
+==> Pouring kafka--2.8.0.catalina.bottle.tar.gz
+==> Caveats
+
+To have launchd start kafka now and restart at login:
+  brew services start kafka
+Or, if you don't want/need a background service you can just run:
+  zookeeper-server-start -daemon /usr/local/etc/kafka/zookeeper.properties & kafka-server-start /usr/local/etc/kafka/server.properties
+==> Summary
+🍺  /usr/local/Cellar/kafka/2.8.0: 200 files, 68.2MB
+==> Caveats
+
+==> zookeeper
+To have launchd start zookeeper now and restart at login:
+  brew services start zookeeper
+Or, if you don't want/need a background service you can just run:
+  zkServer start
+==> kafka
+To have launchd start kafka now and restart at login:
+  brew services start kafka
+Or, if you don't want/need a background service you can just run:
+  zookeeper-server-start -daemon /usr/local/etc/kafka/zookeeper.properties & kafka-server-start /usr/local/etc/kafka/server.properties
+
+
+
+ZooKeeper
+---------------
+As daemon process -
+	zookeeper-server-start -daemon /usr/local/etc/kafka/zookeeper.properties
+Not as daemon process -
+	zookeeper-server-start /usr/local/etc/kafka/zookeeper.properties
+
+Kafka
+--------
+Not as daemon process -
+	kafka-server-start /usr/local/etc/kafka/server.properties 
+As daemon process -
+	kafka-server-start -daemon /usr/local/etc/kafka/server.properties
+
+Start both zookeeper and kafka together
+------------------------------------------------------
+zookeeper-server-start -daemon /usr/local/etc/kafka/zookeeper.properties & kafka-server-start /usr/local/etc/kafka/server.properties
+
+Kafka Topic Commands
+-------------------------------
+Creating a topic -
+	With specific configuration
+		kafka-topics --bootstrap-server localhost:9092 --topic first-topic --create --partitions 3 --replication-factor 1
+	With all defaults -
+		kafka-topics --bootstrap-server localhost:9092 --topic first-topic --create
+Listing topics -
+	 kafka-topics --bootstrap-server localhost:9092 --list
+Description of a topic -
+	kafka-topics --bootstrap-server localhost:9092 --topic first-topic --describe
+Deleting a topic -
+	kafka-topics --bootstrap-server localhost:9092 --topic first-topic --delete
+
+Kafka-Console-Producer Commands
+------------------------------------------------
+kafka-console-producer --bootstrap-server localhost:9092 --topic first-topic
+There will be a little caret , start typing ur messages. If there is no error messages are successfully sent.
+Use Ctl+c to exit the console producer
+
+Producing messages to a non-existent topic ::
+	kafka-console-producer --bootstrap-server localhost:9092 --topic non-existing-topic
+I changed the default # of partitions by editing the server.properties file at /usr/local/etc/kafka and restarted kafka admin client
+
+After that ::
+	kafka-console-producer --bootstrap-server localhost:9092 --topic non-existing-topic_2
+New non-existing topic non-existing-topic_2 was created with 3 partitions
+
+Teacher's recommendation is to manually create a topic and then produce messages.
+
+Kafka-Console-Consumer Commands
+--------------------------------------------------
+Basic command for consuming -
+	kafka-console-consumer --bootstrap-server localhost:9092 --topic first-topic
+But with this command Messages sent prior to starting consumer will not be consumed. Only those Messages sent after the consumer started will be consumed.
+
+To read the messages from the beginning of the topic use the command -
+	kafka-console-consumer --bootstrap-server localhost:9092 --topic first-topic --from-beginning
+
+
+Kafka-Console-Consumers in a Group
+--------------------------------------------------
+Command to start the consumers in a group -
+	kafka-console-consumer --bootstrap-server localhost:9092 --topic first-topic --group second-consumer-group
+Command to start the consumers in a new group to read from start of the topic from beginning
+	kafka-console-consumer --bootstrap-server localhost:9092 --topic first-topic --group second-consumer-group --from-beginning
+
+Kafka remembers the offset(index) on every topic that consumer(s) of a group consumed. If u start a consumer of an existing group on existing topic with --from-beginning command it only reads those messages that are not already consumed by an active or a non-active consumer of the same group.
+If u start new consumer on new group for a topic that has a bunch of messages on each partition (offset of each partition is > zero) then by default LAG for the new consumer group is zero, meaning new group will not read old messages, will read only new messages, if u want this group to read all the messages from the beginning , then use  --from-beginning option
+
+To see how this works please spin up multiple consumers in the same group
+
+
+Kafka-consumer-Groups
+---------------------------------
+
+List all the consumer groups -
+	kafka-consumer-groups --bootstrap-server localhost:9092 --list
+
+Describe a consumer group -
+	kafka-consumer-groups --bootstrap-server localhost:9092 --group first-consumer-group --describe
+	Lag indicates the delta between CURRENT-OFFSET and LOG-END-OFFSET
+Start a consumer of group first-consumer-group and the run
+	kafka-consumer-groups --bootstrap-server localhost:9092 --group first-consumer-group --describe
+That will list the active consumers and which partitions they are listening to , etc
+
+Reset offset
+-----------------
+Reset offset will only reset the offset of a specific consumer group
+	kafka-consumer-groups --bootstrap-server localhost:9092 --topic first-topic --group first-consumer-group --reset-offsets --to-earliest --executea
+Above command resets the offset of first-consumer-group to earliest (0 in this case) , this option is very different from --from-beginning.
+
+	kafka-consumer-groups --bootstrap-server localhost:9092 --group second-consumer-group --topic first-topic --reset-offsets  --shift-by -2  --execute
+Above command will reset the offset only by few indexes so the consumer group can read only those and not all from beginning
+
+
