@@ -9,27 +9,30 @@ import java.util.Properties;
 
 public class BasicProducer {
 
-    Properties producerProperties = new Properties();
+    private static final String TOPIC_NAME = "first-topic";
+    private static final String BOOTSTRAP_SERVER = "localhost:9092";
+
+    private Properties kafkaProducerProperties = new Properties();
 
     public BasicProducer () {
-        producerProperties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        producerProperties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        producerProperties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        kafkaProducerProperties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVER);
+        kafkaProducerProperties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        kafkaProducerProperties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
     }
 
     public void sendMessage () {
-        KafkaProducer<String, String> kafkaProducer = new KafkaProducer<>(producerProperties);
+        KafkaProducer<String, String> kafkaProducer = new KafkaProducer<>(kafkaProducerProperties);
         ProducerRecord <String, String> producerRecord =
-                new ProducerRecord<>("first-topic", "first message from Java producer");
+                new ProducerRecord<>(TOPIC_NAME, "first message from Java producer");
 
         //asynchronous
         kafkaProducer.send(producerRecord);
+        //flush data
         kafkaProducer.flush();
-        kafkaProducer.close();
-    }
+        //flush and close the topic
+        kafkaProducer.close();    }
 
     public static void main(String[] args) {
-        BasicProducer producer = new BasicProducer();
-        producer.sendMessage();
+        new BasicProducer().sendMessage();
     }
 }

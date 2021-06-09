@@ -33,23 +33,22 @@ Or, if you don't want/need a background service you can just run:
   zookeeper-server-start -daemon /usr/local/etc/kafka/zookeeper.properties & kafka-server-start /usr/local/etc/kafka/server.properties
 
 
-
 ZooKeeper
----------------
+---------
 As daemon process -
 	zookeeper-server-start -daemon /usr/local/etc/kafka/zookeeper.properties
 Not as daemon process -
 	zookeeper-server-start /usr/local/etc/kafka/zookeeper.properties
 
-Kafka
---------
+Kafka Server
+------------
 Not as daemon process -
 	kafka-server-start /usr/local/etc/kafka/server.properties 
 As daemon process -
 	kafka-server-start -daemon /usr/local/etc/kafka/server.properties
 
 Start both zookeeper and kafka together
-------------------------------------------------------
+----------------------------------------
 zookeeper-server-start -daemon /usr/local/etc/kafka/zookeeper.properties & kafka-server-start /usr/local/etc/kafka/server.properties
 
 Kafka Topic Commands
@@ -114,7 +113,8 @@ List all the consumer groups -
 Describe a consumer group -
 	kafka-consumer-groups --bootstrap-server localhost:9092 --group first-consumer-group --describe
 	Lag indicates the delta between CURRENT-OFFSET and LOG-END-OFFSET
-Start a consumer of group first-consumer-group and the run
+
+Start a consumer of group first-consumer-group in a different Terminal and the run this command to see what output we get
 	kafka-consumer-groups --bootstrap-server localhost:9092 --group first-consumer-group --describe
 That will list the active consumers and which partitions they are listening to , etc
 
@@ -127,4 +127,78 @@ Above command resets the offset of first-consumer-group to earliest (0 in this c
 	kafka-consumer-groups --bootstrap-server localhost:9092 --group second-consumer-group --topic first-topic --reset-offsets  --shift-by -2  --execute
 Above command will reset the offset only by few indexes so the consumer group can read only those and not all from beginning
 
+
+Kafka Producer with Callback
+----------------------------
+public void onCompletion(RecordMetadata metadata, Exception exception) {
+// this executes every time a message is successfully sent or an exception is thrown
+
+Kafka Producer with Key
+-----------------------
+Messages with same key goes the same partition
+by default producer.send is asynchronous, it can be synchronous by adding get() method. Look at the BasicProducerWithKey.
+Run this sample multiple time to see that same key goes to same partition.
+
+Message Key : id_0
+Partition : 1
+
+Message Key : id_1
+Partition : 0
+
+Message Key : id_2
+Partition : 2
+
+Message Key : id_3
+Partition : 0
+
+Message Key : id_4
+Partition : 2
+
+Message Key : id_5
+Partition : 2
+
+Message Key : id_6
+Partition : 0
+
+Message Key : id_7
+Partition : 2
+
+Message Key : id_8
+Partition : 1
+
+Message Key : id_9
+Partition : 2
+
+Kafka Consumer
+---------------
+For AUTO_OFFSET_RESET_CONFIG , there are 3 values available
+    earliest - from the beginning of the topic
+    latest - from the point consumer is added to topic onwards
+    none - will throw error
+
+One consumer can consume from more than one topic
+
+Java Consumer inside a consumer group
+-------------------------------------
+you can run the Consumer Java application more than once to create multiple consumers in a group.
+When u spin and stop consumers look for messages in the console to check for how many stopped and how re-assignment happens.
+
+Ex - message from BasicConsumer1 after 2 and 3 were started
+09:19:30.513 [main] INFO  o.a.k.c.c.i.AbstractCoordinator [Consumer clientId=consumer-first-java-consumer-group-1, groupId=first-java-consumer-group] Attempt to heartbeat failed since group is rebalancing
+09:19:30.515 [main] INFO  o.a.k.c.c.i.ConsumerCoordinator [Consumer clientId=consumer-first-java-consumer-group-1, groupId=first-java-consumer-group] Revoke previously assigned partitions first-topic-1, first-topic-0
+09:19:30.515 [main] INFO  o.a.k.c.c.i.AbstractCoordinator [Consumer clientId=consumer-first-java-consumer-group-1, groupId=first-java-consumer-group] (Re-)joining group
+09:19:30.516 [main] INFO  o.a.k.c.c.i.ConsumerCoordinator [Consumer clientId=consumer-first-java-consumer-group-1, groupId=first-java-consumer-group] Finished assignment for group at generation 22: {consumer-first-java-consumer-group-1-6cfecd2a-68ce-47e5-b990-9040dac7edf4=Assignment(partitions=[first-topic-0]), consumer-first-java-consumer-group-1-ffcf31b6-ee27-4e13-96aa-3398669698a0=Assignment(partitions=[first-topic-2]), consumer-first-java-consumer-group-1-948df6b3-b41b-4ede-b7f0-191f95971117=Assignment(partitions=[first-topic-1])}
+09:19:30.518 [main] INFO  o.a.k.c.c.i.AbstractCoordinator [Consumer clientId=consumer-first-java-consumer-group-1, groupId=first-java-consumer-group] Successfully joined group with generation 22
+09:19:30.518 [main] INFO  o.a.k.c.c.i.ConsumerCoordinator [Consumer clientId=consumer-first-java-consumer-group-1, groupId=first-java-consumer-group] Notifying assignor about the new Assignment(partitions=[first-topic-0])
+09:19:30.518 [main] INFO  o.a.k.c.c.i.ConsumerCoordinator [Consumer clientId=consumer-first-java-consumer-group-1, groupId=first-java-consumer-group] Adding newly assigned partitions: first-topic-0
+09:19:30.519 [main] INFO  o.a.k.c.c.i.ConsumerCoordinator [Consumer clientId=consumer-first-java-consumer-group-1, groupId=first-java-consumer-group] Setting offset for partition first-topic-0 to the committed offset FetchPosition{offset=57, offsetEpoch=Optional[0], currentLeader=LeaderAndEpoch{leader=Optional[192.168.1.16:9092 (id: 0 rack: null)], epoch=0}}
+
+
+Java Consumer with Threads
+--------------------------
+Refer to ConsumerAsThread.java for example, Its slightly complicated.
+
+Java Consumer Assign and Seek
+------------------------------
+Assign and Seek are mostly used to replay data and fetch a specific message
 
