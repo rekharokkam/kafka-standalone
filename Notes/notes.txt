@@ -1,3 +1,10 @@
+Chapter - Kafka Theory
+---------------------
+
+
+Chapter - Starting Kafka
+------------------------
+
 brew services start zookeeper
 
 brew services start kafka
@@ -50,6 +57,10 @@ As daemon process -
 Start both zookeeper and kafka together
 ----------------------------------------
 zookeeper-server-start -daemon /usr/local/etc/kafka/zookeeper.properties & kafka-server-start /usr/local/etc/kafka/server.properties
+
+
+Chapter - Command Line Interface 101
+------------------------------------
 
 Kafka Topic Commands
 -------------------------------
@@ -127,6 +138,9 @@ Above command resets the offset of first-consumer-group to earliest (0 in this c
 	kafka-consumer-groups --bootstrap-server localhost:9092 --group second-consumer-group --topic first-topic --reset-offsets  --shift-by -2  --execute
 Above command will reset the offset only by few indexes so the consumer group can read only those and not all from beginning
 
+Chapter - Kafka Java Programming 101
+------------------------------------
+
 
 Kafka Producer with Callback
 ----------------------------
@@ -202,3 +216,13 @@ Java Consumer Assign and Seek
 ------------------------------
 Assign and Seek are mostly used to replay data and fetch a specific message
 
+Client Bi-Directional Compatibiity
+----------------------------------
+API calls are now versioned. This means
+    older clients (ex - 1.1) can talk to newer brokers (2.0 +)
+    newer cluents (2.0 +) can talk to older brokers (1.1)
+
+As far as possible - use latest client irrespective of broker versions
+
+Chapter - Kafka Twitter Producer and Advanced Configurations
+-------------------------------------------------------------
