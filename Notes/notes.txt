@@ -138,9 +138,14 @@ Above command resets the offset of first-consumer-group to earliest (0 in this c
 	kafka-consumer-groups --bootstrap-server localhost:9092 --group second-consumer-group --topic first-topic --reset-offsets  --shift-by -2  --execute
 Above command will reset the offset only by few indexes so the consumer group can read only those and not all from beginning
 
+Resetting offset based on a particular offset
+    - kafka-consumer-groups --bootstrap-server kafka-tte-app.prod.target.com:9093 --group ccorders-v3-prod --command-config client-ssl.properties --topic fit-sparta-retail-transactions:0 --reset-offsets  --to-offset 319814955  --execute
+
+Decode and encoded file :: base64 -d -i <input file name> -o <output file name> OR base64 -d copy_and_paste_the_string
+
+
 Chapter - Kafka Java Programming 101
 ------------------------------------
-
 
 Kafka Producer with Callback
 ----------------------------
@@ -226,3 +231,137 @@ As far as possible - use latest client irrespective of broker versions
 
 Chapter - Kafka Twitter Producer and Advanced Configurations
 -------------------------------------------------------------
+After starting TwitterProducer class , run the console consumer with the command - kafka-console-consumer --bootstrap-server localhost:9092 --topic twitter-tweets-topic
+
+        //flush data.
+        //Flush actually causes queued records to be sent and blocks until they are completed (successfully or otherwise).
+        // Calling get() immediately doesn't trigger anything to happen
+        kafkaProducer.flush();
+
+Acks and Min.Insync.replicas
+----------------------------
+
+3 levels for acks - 0, 1 and all
+
+acks = 0 - No response is requested from the broker. If broker goes offline or an exception occurs, producer wont know and data will be lost.
+This setting is useful when its okay to loose the data. Producer will not know if the message made it to the broker or not.
+acks = 0 is good for performance, Good use cases are - metrics, Log collection, etc
+
+acks = 1 - Default settings as of Kafka 2.0 is acks = 1. This meands leader response is requested but replication is not guaranteed. Usually happens
+in the backgroud.
+If ack is not received then producer may re-try.
+Producer knows the broker has the data.
+If leader goes down before replication happens the data will be lost.
+
+acks = all - Leader and replicas both are requested to acknowledge. Broker after receives the acknowledgement from the leader and all replicas
+sends the ack back to producer. This setting is the safest and adds latency (not much). This is a necessary setting for safe Producer.
+If there are enough replica sets with this setting there is no data loss.
+With acks = all , there is another setting - min.insync.replicas
+
+min.insync.replicas , is broker or topic setting. broker setting can be overwritten with topic setting.
+min.insync.replicas = 2 implies there are atleast 2 brokers that are ISR (including the leader) that must respond with the ack.
+min.insync.replicas = 2 is the common setting
+
+If replication factor = 3, min.insync.replicas = 2 and acks = all
+    - can only tolerate one broker going down other wise producer will receive an exception on send (NOT_ENOUGH_REPLICAS)
+
+For maximum safety, maximum availability - replication factory = 3, min.insync.replicas 2, and acks = all
+
+Producer retries
+----------------
+
+No need to worry about this as my version of kafka is greater than 2.1
+
+Idempotent Producers
+--------------------
+
+Kafka >=2.1 has a very high number of retries - 2147483647 by default.
+Lets consider a scenario to understand this use case -
+1) Producer successfully sent message to Broker, broker received the message and committed but ack sent by broker didnt reach the Producer.
+2) Producer since didnt receive the message sent the message again, broker received a duplicate message and sent the ack back
+that reached the producer.
+3) Per producer there was only 1 successful message but for broker there are duplicates.
+
+Idempotent Producer sends a produce_request_id which is used by the broker to identify duplicate requests, broker commits the message only once
+
+Idempotent Producers are great to guarantee a stable and safe pipeline
+by default these are these settings of Producers if using kafka version >= 2.1. These settings apply automatically after producer starts if
+u dont overwrite them manually.
+
+retries = Integer.MAX_VALUE (2147483647)
+max.in.flight.requests.per.connection = 5 (Kafka >= 1.0) - this is the number of requests per connection. Kafka maintains ordering even if there are retries.
+acks = all
+
+Teacher recommends to set these settings manually so its explicit in the code and obvious whats happening.
+
+How do we set idempotent porducers -
+    producerProps.put ("enable.idempotence", true)
+
+Safe Producers
+---------------
+
+summarizing the settings here -
+ - min.insync.replicas = 2 - at the topic or broker level, topic leve settings overwrite the broker level settings
+
+at the Producer level
+enable.idempotence =  true
+acks = all,
+retries = MAX_INT (by default)
+max.in.flight.requests.per.connection = 5 (default)
+
+while keeping the ordering guaranteed and improved performance.
+
+PS - Running a safe producer might impact the throughput and latency but its not big
+
+Refer to the TwitterProducer for setting these properties.
+
+Producer Compression
+--------------------
+
+Compression is enabled at the Producer level, it does not require any configuration changes either in broker or in consumer.
+"compression.type" can be 'none' (default), 'gzip', 'Iz4' and 'snappy'
+Compression is more effective when the batch of kafka messages is bigger, more u send to Kafka , compression is more helpful.
+
+Advantages of compression
+- much smaller producer request message (compression ratio can go upto 4x)
+- Faster to transfer data over the network as message size is smaller
+- less latency
+- Better throughput
+- Better disk Utilization in kafka (Stores messages on disk are smaller)
+
+Disadvantage
+- Producer uses some CPU cycles to compression
+- Consumers also should use CPU cycles to uncompress the data
+
+gzip has highest compression ratio but its not fast
+
+Producer batching - this is useful in performance improvement
+-------------------------------------------------------------
+
+Kafka tries to send the messages as soon as possible to reduce the latency.
+
+max.in.flight.requests.per.connection = 5, upto 5 messages produced individually can be sent at the same time.
+If there are more messages ready to be sent while 5 messages are in flight, then kafka starts batching the messages so it can send them all in one go.
+
+Smart batching allows kafka to have high throughput while maintaining low latency.
+Batches have higher compression ratio so better efficiency. Each batch is considered one request.
+
+There are 2 settings for batching
+- linger.ms and batch,size
+
+linger.ms - Number of millisecs a producer is willing to wait before sending out a batch (default 0)
+By introducing a small delay linger.ms = 5, we increase the chances of messages being sent as batch, this batching helps with
+higher throughput, efficiency and compression of producer
+
+If batch is full (batch.size) before the linger.ms ends, then producer sends the message to kafka.
+
+batch.size - Maximum number of bytes that will be included in a batch. by default it is 16KB
+Any message bigger than the batch.size will not be batched.
+batch is allocated per partition
+
+High throughput producer
+------------------------
+
+
+
+

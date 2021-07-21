@@ -1,0 +1,130 @@
+Chapter 2 : AVRO Schemas
+------------------------
+
+What is Avro
+------------
+AVRO - has a schema and a payload
+
+Advantages of using AVRO
+    - Data is fully typed
+    - Data is compressed automatically
+    - Schema (defined using JSON) also has data
+    - Documentation is embedded in the schema
+    - Data can be read across any language
+    - Schema can evolve over time in a safe manner
+
+Disadvantage
+    - All programming languages may not support AVRO
+    - Since data is compressed and serialized , its not possible to print the data without using specialized tools.
+
+Primitive types
+----------------
+null : no value
+boolean : a binary value
+int : 32 bit signed integer
+long : 64 bit signed integer
+float : single precision 32 bit IEEE 754 floating-point number
+double : double precision 64 bit IEEE 754 floating-point number
+bytes : sequence of 8 bit unsigned bytes
+string : unicode character sequence
+
+Avro record schema
+------------------
+Avro record schemas are defined in JSON
+It has some common fields
+Name : Name of your schema
+Namespace : equivalent of package in java
+Doc : documenation for the Schema
+Aliases : Optional Other names for your schema
+Fields : Array of fields on the record
+    Each field will contain
+    Name : name of the field
+    Doc : documenation for the field
+    Type : data type for that field (can be primitive)
+    Default : default value for the field
+
+Excercise - Defining an Avro schema for customer
+Customer has
+    - First Name
+    - Last Name
+    - Age
+    - Height (in cms)
+    - Weight (in kgs)
+    - Automated email turned on (Boolean , default true)
+
+Complex Types
+-------------
+ - Enums
+ - Arrays
+ - Maps
+ - Unions
+ - Calling other schemas as types
+
+ Enums - Note - Once an Enum is set, changing the enum values is forbidden if you want to main compatibility
+ Arrays - List of undefined size for items that share the same schema
+ Maps - List of keys and values, where keys are strings, values can be of different types
+ Unions - can allow a field to take different values. Ex - ["string", "int", "boolean"]. Field can be an int or a string or a boolean.
+    If defaults are defined for Unions then default should be of type of first Union item. Referring to the above example, if default is
+    defined then it should be of value "string". Most common use case for Unions is to define an Optional Value. -
+    {"name": "middle_name", "type": ["null", "string"], "default": null].
+    PS - "null" is not same as null
+
+Avro Schema Practice 2
+----------------------
+Customer has
+    - First Name
+    - Middle Name (Optional)
+    - Last Name
+    - Age
+    - Height (in cms)
+    - Weight (in kgs)
+    - Automated email (Boolean , default true)
+    - Customer emails (array), default is an empty array
+    - customer Address (This is a record in itself)
+        - Address
+        - City
+        - Postcode (String or number)
+        - Type (Enum with values - PO BOX, RESIDENTIAL, ENTERPRISE)
+
+Customer emails field has a default value of empty array
+
+Logical Types
+-------------
+Logical types are added to give more meaning to primitive types.
+Most commonly used
+
+decimal - bytes
+date - int - number of days since unix epoch (Jan 1st 1970)
+time-millis - long - number of milliseconds after midnight, 00:00:00.000
+timestamp-millis - long - number of milliseconds since unix epoch (epoch - 1 January 1970 00:00:00.000 UTC)
+
+customer_signup_ts field on the customer-complex.avsc
+
+Complex case of Decimals
+------------------------
+Floats and doubles are called floating point binary types. In memory they represent something like -  10001.10010110011
+They are just binary types.
+
+Decimal is  floating decimal point type. They represent a number like - 12345.6789
+PS - some decimals cannot be represented accurately as floats or doubles
+
+Floats and Doubles are good for scientific calculation and such that dont need a high level of accuracy,
+decimal  is used for representing money fields. For money fields we dont want to be off even by tiny bit, high precision is needed.
+
+In Avro there is decimal LogicalType, but its underlying type is bytes, which means you cant really print decimal as JSon
+Since their underlying representation is bytes, it will be printed as gibberish.
+
+how to deal with this issue ? Teacher's recommendation is to use String as parsing of String into decimals is easy
+
+
+
+
+
+
+
+
+
+
+
+
+

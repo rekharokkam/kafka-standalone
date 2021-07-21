@@ -1,4 +1,4 @@
-package com.learning.spring.kafka.producercallback;
+package com.learning.spring.kafka.kafkajavaprogramming101.producercallback;
 
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.RecordMetadata;
