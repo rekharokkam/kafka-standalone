@@ -1,4 +1,4 @@
-package com.learning.spring.kafka.producer;
+package com.learning.spring.kafka.kafkajavaprogramming101.producer;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;

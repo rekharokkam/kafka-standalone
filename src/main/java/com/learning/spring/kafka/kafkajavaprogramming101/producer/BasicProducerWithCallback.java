@@ -1,6 +1,6 @@
-package com.learning.spring.kafka.producer;
+package com.learning.spring.kafka.kafkajavaprogramming101.producer;
 
-import com.learning.spring.kafka.producercallback.MyProducerCallback;
+import com.learning.spring.kafka.kafkajavaprogramming101.producercallback.MyProducerCallback;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
@@ -34,7 +34,9 @@ public class BasicProducerWithCallback {
             kafkaProducer.send(producerRecord, new MyProducerCallback());
         }
 
-        //flush data
+        //flush data.
+        //Flush actually causes queued records to be sent and blocks until they are completed (successfully or otherwise).
+        // Calling get() immediately doesn't trigger anything to happen
         kafkaProducer.flush();
         //flush and close the topic
         kafkaProducer.close();

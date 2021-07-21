@@ -1,0 +1,59 @@
+{
+  "type": "record",
+  "namespace": "com.learning.spring.kafka",
+  "name": "CustomerAddress",
+  "fields": [
+    {"name": "address", "type": "string"},
+    {"name": "city", "type": "string"},
+    {"name": "postcode", "type": ["string", "int"]},
+    {"name": "type", "type": "enum", "symbols" : ["PO BOX", "RESIDENTIAL", "ENTERPRISE"]}
+  ]
+},
+{
+  "type": "record",
+  "namespace": "com.learning.spring.kafka",
+  "name": "customer",
+  "doc": "Avro Schema for Customer",
+  "fields": [
+    {
+      "name": "first_name",
+      "type": "string",
+      "doc": "First Name of the Customer"
+    },
+    {
+      "name": "last_name",
+      "type": "string",
+      "doc": "Last Name of the Customer"
+    },
+    {
+      "name": "age",
+      "type": "int",
+      "doc": "Age of the Customer"
+    },
+    {
+      "name": "height",
+      "type": "float",
+      "doc": "Height of the customer in inches"
+    },
+    {
+      "name": "weight",
+      "type": "float",
+      "doc": "weight of the customer in pounds"
+    },
+    {
+      "name": "automated_email",
+      "type": "boolean",
+      "default": true,
+      "doc": "Indicates if the customer opted for automated marketing emails, by default its true"
+    },
+    {
+      "name": "customer_email", "type": "array", "items": "string", "default": []}
+    },
+    {
+      "name": "customer_address", "type": "com.learning.spring.kafka.CustomerAddress"
+    },
+    {
+      "name": "customer_signup_ts", "type": "long", "logicalType": "timestamp-millis", "doc": "timestamp the user singed up since Epoch time - since 1st January 1970 UTC 00:00:00.000 UTC"
+    }
+  ]
+}

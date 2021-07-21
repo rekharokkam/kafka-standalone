@@ -1,6 +1,6 @@
-package com.learning.spring.kafka.producer;
+package com.learning.spring.kafka.kafkajavaprogramming101.producer;
 
-import com.learning.spring.kafka.producercallback.MyProducerCallback;
+import com.learning.spring.kafka.kafkajavaprogramming101.producercallback.MyProducerCallback;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
