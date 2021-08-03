@@ -132,7 +132,7 @@ That will list the active consumers and which partitions they are listening to ,
 Reset offset
 -----------------
 Reset offset will only reset the offset of a specific consumer group
-	kafka-consumer-groups --bootstrap-server localhost:9092 --topic first-topic --group first-consumer-group --reset-offsets --to-earliest --executea
+	kafka-consumer-groups --bootstrap-server localhost:9092 --topic first-topic --group first-consumer-group --reset-offsets --to-earliest --execute
 Above command resets the offset of first-consumer-group to earliest (0 in this case) , this option is very different from --from-beginning.
 
 	kafka-consumer-groups --bootstrap-server localhost:9092 --group second-consumer-group --topic first-topic --reset-offsets  --shift-by -2  --execute
@@ -361,6 +361,16 @@ batch is allocated per partition
 
 High throughput producer
 ------------------------
+
+
+
+
+
+
+Command to try - For grabbing one message from topic
+----------------------------------------------------
+
+./bin/kafka-console-consumer.sh --bootstrap-server kafka-tte-gom.prod.target.com:9093 --consumer.config ~/kafka-ssl.prod.properties --topic gom-email --partition 2 --offset 463284684 --max-messages 1
 
 
 

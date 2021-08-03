@@ -116,6 +116,12 @@ Since their underlying representation is bytes, it will be printed as gibberish.
 
 how to deal with this issue ? Teacher's recommendation is to use String as parsing of String into decimals is easy
 
+Chapter 3 : Avro in Java
+-------------------------
+
+Generic Record in Avro
+----------------------
+
 
 
 
