@@ -129,6 +129,12 @@ This approach of using the Generic Record is not recommended as things can fail 
 
 Generic Record is not Type safe, so it might result in failures during runtime.
 
+Specific Record in Avro
+-----------------------
+Specific Record is also an Avro Object, it is obtained from code generation of avro schemas.
+
+
+
 
 
 

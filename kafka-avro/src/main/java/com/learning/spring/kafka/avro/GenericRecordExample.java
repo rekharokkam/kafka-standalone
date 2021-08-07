@@ -1,4 +1,4 @@
-package com.learning.spring.kafka.avro.genericrecord;
+package com.learning.spring.kafka.avro;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.Schema;
@@ -88,7 +88,7 @@ public class GenericRecordExample {
         //Write the generic record to a file
         final DatumWriter<GenericRecord> datumWriter = new GenericDatumWriter<>(schema);
         try (DataFileWriter<GenericRecord> dataFileWriter = new DataFileWriter<>(datumWriter)) {
-            dataFileWriter.create(customerBasic.getSchema(), new File("customer-generated.avro"));
+            dataFileWriter.create(customerBasic.getSchema(), new File("customer-generic-generated.avro"));
             dataFileWriter.append(customerBasic);
             log.info("avro schema successfully created from Generic Record");
         } catch (IOException ioException) {
@@ -97,7 +97,7 @@ public class GenericRecordExample {
         }
 
         //Read a generic record from a file
-        final File basicCustomerFile = new File("customer-generated.avro");
+        final File basicCustomerFile = new File("customer-generic-generated.avro");
         final DatumReader<GenericRecord> datumReader = new GenericDatumReader<>();
         GenericRecord customerBasicRecord;
         try (DataFileReader<GenericRecord> dataFileReader = new DataFileReader<>(basicCustomerFile, datumReader)) {
@@ -105,7 +105,7 @@ public class GenericRecordExample {
             log.info("Successfully read customer record");
             log.info("Read avro schema from file : {}", customerBasicRecord.toString());
             log.info("Customer First Name : {}" , customerBasicRecord.get("first_name"));
-            log.info("Reading a non-existin field : {}", customerBasicRecord.get("non-existing"));
+//            log.info("Reading a non-existin field : {}", customerBasicRecord.get("non-existing"));
         } catch (IOException ioException) {
             System.err.println("Exception occurred while Reading Generic Record from a file");
             ioException.printStackTrace(System.err);
