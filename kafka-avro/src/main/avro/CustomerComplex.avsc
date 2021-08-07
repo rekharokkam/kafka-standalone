@@ -1,8 +1,8 @@
 {
   "type": "record",
-  "namespace": "com.learning.spring.kafka",
-  "name": "customer",
-  "doc": "Avro Schema for Customer",
+  "namespace": "com.learning.spring.kafka.avro",
+  "name": "CustomerComplex",
+  "doc": "Avro Schema for Complex Customer",
   "fields": [
     {
       "name": "first_name",
@@ -34,6 +34,31 @@
       "type": "boolean",
       "default": true,
       "doc": "Indicates if the customer opted for automated marketing emails, by default its true"
+    },
+    {
+      "name": "customer_emails",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "name": "Customer_Email",
+          "default": []
+        }
+      }
+    },
+    {
+      "name": "customer_address", "type": "com.learning.spring.kafka.avro.CustomerAddress"
+    },
+    {
+      "name": "customer_signup_ts",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "timestamp the user singed up since Epoch time - since 1st January 1970 UTC 00:00:00.000 UTC"
     }
   ]
 }
+
+
+

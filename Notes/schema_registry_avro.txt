@@ -121,6 +121,14 @@ Chapter 3 : Avro in Java
 
 Generic Record in Avro
 ----------------------
+A Generic Object is used to create a Java object from Avro schema, schema being referenced as
+ - File
+ - String
+
+This approach of using the Generic Record is not recommended as things can fail at runtime but its the most simple way to do so
+
+Generic Record is not Type safe, so it might result in failures during runtime.
+
 
 
 

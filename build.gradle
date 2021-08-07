@@ -2,6 +2,12 @@ buildscript {
     ext {
         springboot_version = '2.4.5'
         lombok_version = '1.18.16'
+        avro_plugin_version = '1.1.0'
+    }
+
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
     }
 }
 
@@ -9,6 +15,7 @@ plugins {
     id 'org.springframework.boot' version "${springboot_version}"
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id 'com.github.davidmc24.gradle.plugin.avro' version "${avro_plugin_version}" apply false
 }
 
 

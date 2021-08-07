@@ -1,17 +1,30 @@
+buildscript {
+    ext {
+        avro_version = '1.10.2'
+    }
+}
+
 plugins {
     id 'org.springframework.boot'
     id 'io.spring.dependency-management'
     id 'java'
+    id 'com.github.davidmc24.gradle.plugin.avro'
 }
 
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web:${springboot_version}"
     implementation 'org.apache.kafka:kafka-streams'
     implementation 'org.springframework.kafka:spring-kafka'
+    implementation "org.apache.avro:avro:${avro_version}"
     compileOnly "org.projectlombok:lombok:${lombok_version}"
     annotationProcessor "org.projectlombok:lombok:${lombok_version}"
     testImplementation "org.springframework.boot:spring-boot-starter-test:${springboot_version}"
     testImplementation 'org.springframework.kafka:spring-kafka-test'
+}
+
+avro {
+    createSetters = false
+    fieldVisibility = "PRIVATE"
 }
 
 test {
