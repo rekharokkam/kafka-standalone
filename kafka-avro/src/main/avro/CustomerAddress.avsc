@@ -1,0 +1,18 @@
+{
+  "type": "record",
+  "namespace": "com.learning.spring.kafka.avro",
+  "name": "CustomerAddress",
+  "fields": [
+    {"name": "address", "type": "string"},
+    {"name": "city", "type": "string"},
+    {"name": "postcode", "type": ["string", "int"]},
+    {
+      "name": "addressType",
+      "type": {
+        "type": "enum",
+        "name": "AddressType",
+        "symbols": [ "PO_BOX", "RESIDENTIAL", "ENTERPRISE" ]
+      }
+    }
+  ]
+}
