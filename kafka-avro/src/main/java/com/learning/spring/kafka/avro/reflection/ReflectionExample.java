@@ -31,7 +31,7 @@ public class ReflectionExample {
             dataFileWriter.append(new ReflectionCustomer("Vidyut", "Jammwal", null));
             log.info("avro schema successfully created from Reflection Record");
         } catch (IOException ioException) {
-            System.err.println("Exception occurred while writing Generic Record to a file");
+            System.err.println("Exception occurred while writing Reflection Record to a file");
             ioException.printStackTrace(System.err);
         }
 
@@ -45,7 +45,7 @@ public class ReflectionExample {
             }
 
         } catch (IOException ioException) {
-            System.err.println("Exception occurred while Reading Generic Record from a file");
+            System.err.println("Exception occurred while Reading Reflection Record from a file");
             ioException.printStackTrace(System.err);
         }
 

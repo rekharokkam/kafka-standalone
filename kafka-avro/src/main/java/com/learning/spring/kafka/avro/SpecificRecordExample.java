@@ -3,7 +3,6 @@ package com.learning.spring.kafka.avro;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.file.DataFileWriter;
-import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.specific.SpecificDatumReader;
@@ -35,7 +34,7 @@ public class SpecificRecordExample {
             dataFileWriter.append(customerBasic);
             log.info("avro schema successfully created from Specific Record");
         } catch (IOException ioException) {
-            System.err.println("Exception occurred while writing Generic Record to a file");
+            System.err.println("Exception occurred while writing Specific Record to a file");
             ioException.printStackTrace(System.err);
         }
 
@@ -51,7 +50,7 @@ public class SpecificRecordExample {
                 log.info("Customers Height : {}", height);
             }
         } catch (IOException ioException) {
-            System.err.println("Exception occurred while Reading Generic Record from a file");
+            System.err.println("Exception occurred while Reading Specific Record from a file");
             ioException.printStackTrace(System.err);
         }
     }
