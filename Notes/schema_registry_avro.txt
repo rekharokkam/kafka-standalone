@@ -208,7 +208,24 @@ This hands on is an example of Full compatible change.
 2 new fields with defaults are added to Customer V2 - Phone_number and email
 1 field from version 1 is removed - automated_email, this field has default
 
-Backward compatible : C
+Chapter 4 - Setup and Launch kafka
+----------------------------------
+from inside the kafka-avro directory run :: docker-compose up
+
+http://localhost:3030 :: local kafka environment
+
+download confluent tools in one of 2 ways
+1) by downloading confluent tools, this approach didnt work for me
+2) running the commands
+     docker pull confluentinc/cp-schema-registry
+     docker run -it --rm --net=host confluentinc/cp-schema-registry bash
+
+Once inside the container execute the command
+    - kafka-avro-console-consumer
+
+
+Chapter 5 - Confluent Schema Registry and Kafka
+------------------------------------------------
 
 
 

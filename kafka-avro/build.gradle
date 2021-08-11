@@ -13,7 +13,7 @@ plugins {
 
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web:${springboot_version}"
-    implementation 'org.apache.kafka:kafka-streams'
+//    implementation 'org.apache.kafka:kafka-streams'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation "org.apache.avro:avro:${avro_version}"
     compileOnly "org.projectlombok:lombok:${lombok_version}"

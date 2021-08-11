@@ -40,7 +40,7 @@ allprojects {
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-data-jpa:${springboot_version}"
     implementation "org.springframework.boot:spring-boot-starter-web:${springboot_version}"
-    implementation 'org.apache.kafka:kafka-streams'
+//    implementation 'org.apache.kafka:kafka-streams' 
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'com.twitter:hbc-core:2.2.0' //twitter dependency
     compileOnly "org.projectlombok:lombok:${lombok_version}"
