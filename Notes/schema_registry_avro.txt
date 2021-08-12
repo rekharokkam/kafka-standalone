@@ -267,6 +267,12 @@ Then added new records -
 {"first_name": "John7","last_name": "Doe7","age": 83,"height": 199}
 {"first_name": "John8","last_name": "Doe8","age": 83,"height": 199}
 
+{"first_name": "John9","last_name": "Doe9","age": 83,"height": 199}
+{"first_name": "John10","last_name": "Doe10","age": 83,"height": 199}
+
+{"first_name": "John11","last_name": "Doe10","age": 83,"height": 199, "weight": 100}
+{"first_name": "John12","last_name": "Doe12","age": 83,"height": 199, "weight": 67}
+
 kafka-avro-console-consumer
 ----------------------------
 From inside the container I ran ::  kafka-avro-console-producer --bootstrap-server localhost:9092 --topic customer-topic --property schema.registry.url=http://localhost:8081 --property value.schema.id=22
