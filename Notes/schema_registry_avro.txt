@@ -210,11 +210,11 @@ This hands on is an example of Full compatible change.
 
 Chapter 4 - Setup and Launch kafka
 ----------------------------------
-from inside the kafka-avro directory run :: docker-compose up
+Landoop is the image that comes packaged with UI for schema registry, kafka broker, kafka connect , landoop UI and kafka topics
+From inside the kafka-avro directory run :: docker-compose up to bring up landoop UI
+http://localhost:3030 :: landoop UI there by UI for schema-registry, topics, kafka connect and kafka brokers
 
-http://localhost:3030 :: local kafka environment
-
-download confluent tools in one of 2 ways
+Download confluent tools in one of 2 ways
 1) by downloading confluent tools, this approach didnt work for me
 2) running the commands
      docker pull confluentinc/cp-schema-registry
@@ -226,6 +226,71 @@ Once inside the container execute the command
 
 Chapter 5 - Confluent Schema Registry and Kafka
 ------------------------------------------------
+
+Confluent Schema Registry
+-------------------------
+Schema registry is to store and retrieve schemas for Consumer and Producers
+Enforce Backward / Forward / Full Compatibility on Topics
+Decrease the size of data payload sent to Kafka
+
+Operations - Refer to - https://docs.confluent.io/platform/current/schema-registry/develop/api.htmls  for REST operations
+----------
+We add Schemas
+Retrieve a Schema
+Update a Schema
+Delete a Schema
+All these operations through REST API
+
+Schemas can be applied to Keys and or values
+
+to access landoop UI - Run docker-compose up and then access the UI :: http://localhost:3030
+
+I created the topic - kafka-topics --bootstrap-server localhost:9092 --topic customer-topic --create --partitions 3 --replication-factor 1
+
+Avro Console Producer and Console Consumer
+------------------------------------------
+I created the topic as :: kafka-topics --bootstrap-server localhost:9092 --topic customer-topic --partitions 3 --replication-factor 1 --create
+
+I ran confluent tools image :: docker run -it --rm --net=host confluentinc/cp-schema-registry bash
+
+kafka-avro-console-producer
+---------------------------
+From inside the container I ran ::  kafka-avro-console-producer --bootstrap-server localhost:9092 --topic customer-topic --property schema.registry.url=http://localhost:8081 --property value.schema.id=22
+Then added new records -
+
+{"first_name": "John","last_name": "Doe","age": 29,"height": 167.77}
+{"first_name": "John2","last_name": "Doe2","age": 45,"height": 180}
+{"first_name": "John3","last_name": "Doe3","age": 51,"height": 178}
+{"first_name": "John4","last_name": "Doe4","age": 83,"height": 199}
+{"first_name": "John5","last_name": "Doe5","age": 83,"height": 199}
+{"first_name": "John6","last_name": "Doe6","age": 83,"height": 199}
+{"first_name": "John7","last_name": "Doe7","age": 83,"height": 199}
+{"first_name": "John8","last_name": "Doe8","age": 83,"height": 199}
+
+kafka-avro-console-consumer
+----------------------------
+From inside the container I ran ::  kafka-avro-console-producer --bootstrap-server localhost:9092 --topic customer-topic --property schema.registry.url=http://localhost:8081 --property value.schema.id=22
+
+kafka-avro-console-consumer --bootstrap-server localhost:9092 --topic customer-topic --partition 2 --property schema.registry.url=http://localhost:8081
+If no offset is specified this consumer reads from the end of the topic/partition (messages posted after the consumer started)
+
+kafka-avro-console-consumer --bootstrap-server localhost:9092 --topic customer-topic --partition 2 --offset 1 --property schema.registry.url=http://localhost:8081
+This consumer read from the offset 1 (including message with offset 1)
+
+
+kafka-avro-console-consumer --bootstrap-server localhost:9092 --topic customer-topic --partition 2 --from-beginning --property schema.registry.url=http://localhost:8081
+Read all the messages on the partition
+
+kafka-avro-console-consumer --bootstrap-server localhost:9092 --topic customer-topic  --from-beginning --property schema.registry.url=http://localhost:8081
+If no Partition is specified then this consumer will read from all the partitions
+
+A schema cannot be evolved unless its compatible with the previous version
+
+
+
+
+
+
 
 
 
