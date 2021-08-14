@@ -37,17 +37,16 @@
     },
     {
       "name": "customer_emails",
-      "type": {
+      "type": ["null", {
         "type": "array",
-        "items": {
-          "type": "string",
-          "name": "Customer_Email",
-          "default": []
-        }
-      }
+        "items": "string"
+      }  ],
+      "default": null
     },
     {
-      "name": "customer_address", "type": "com.learning.spring.kafka.avro.CustomerAddress"
+      "name": "customer_address",
+      "type": ["null", "com.learning.spring.kafka.avro.CustomerAddress"],
+      "default": null
     },
     {
       "name": "customer_signup_ts",
