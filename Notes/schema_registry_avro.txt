@@ -211,7 +211,7 @@ This hands on is an example of Full compatible change.
 Chapter 4 - Setup and Launch kafka
 ----------------------------------
 Landoop is the image that comes packaged with UI for schema registry, kafka broker, kafka connect , landoop UI and kafka topics
-From inside the kafka-avro directory run :: docker-compose up to bring up landoop UI
+From inside the kafka-avro directory run :: "docker-compose up" to bring up landoop UI
 http://localhost:3030 :: landoop UI there by UI for schema-registry, topics, kafka connect and kafka brokers
 
 Download confluent tools in one of 2 ways
@@ -233,7 +233,7 @@ Schema registry is to store and retrieve schemas for Consumer and Producers
 Enforce Backward / Forward / Full Compatibility on Topics
 Decrease the size of data payload sent to Kafka
 
-Operations - Refer to - https://docs.confluent.io/platform/current/schema-registry/develop/api.htmls  for REST operations
+Operations - Refer to - https://docs.confluent.io/platform/current/schema-registry/develop/api.html  for REST operations
 ----------
 We add Schemas
 Retrieve a Schema
@@ -292,6 +292,16 @@ If no Partition is specified then this consumer will read from all the partition
 
 A schema cannot be evolved unless its compatible with the previous version
 
+Kafka Avro Producer in Java
+----------------------------
+All details are in the class KafkaAvroProdicerV1.java, This class only produces the message,
+for consuming the message I used console consumer as -
+    kafka-avro-console-consumer --bootstrap-server localhost:9092 --topic customer-topic --from-beginning --property schema.registry.url=http://localhost:8081
+
+If Topic does not exist then it gets auto created by KafkaProducer based on the default settings in kafka/BootStrap Server
+
+Kafka AVRO Consumer in Java
+---------------------------
 
 
 

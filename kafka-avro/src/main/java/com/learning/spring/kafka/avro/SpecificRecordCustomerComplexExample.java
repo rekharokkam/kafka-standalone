@@ -28,7 +28,9 @@ public class SpecificRecordCustomerComplexExample {
         customerComplexBuilder.setWeight(110.00f);
         customerComplexBuilder.setAutomatedEmail(false);
         customerComplexBuilder.setCustomerSignupTs(Instant.now());
+        customerComplexBuilder.setSalary("2000.89");
 //        customerComplexBuilder.setCustomerEmails(Arrays.asList("example@example.com"));
+
 
         CustomerAddress.Builder customerAddressBuilder = CustomerAddress.newBuilder();
         customerAddressBuilder.setAddress("someStreet");
