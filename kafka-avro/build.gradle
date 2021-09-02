@@ -15,7 +15,11 @@ plugins {
 dependencies {
     compileOnly "org.projectlombok:lombok:${lombok_version}"
 
-    implementation "org.springframework.boot:spring-boot-starter-web:${springboot_version}"
+    implementation ("org.springframework.boot:spring-boot-starter-web:${springboot_version}") {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+    implementation "org.springframework.boot:spring-boot-starter-log4j2:${springboot_version}"
+
 //    implementation 'org.apache.kafka:kafka-streams'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation "org.apache.avro:avro:${avro_version}"

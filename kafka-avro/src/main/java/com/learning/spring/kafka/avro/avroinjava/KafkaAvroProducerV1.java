@@ -2,15 +2,17 @@ package com.learning.spring.kafka.avro.avroinjava;
 
 import com.learning.spring.kafka.avro.CustomerV1;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
 
+@Slf4j
 public class KafkaAvroProducerV1 {
 
     private static final String BOOTSTRAP_SERVER = "localhost:9092";
-    private static final String CUSTOMER_AVRO_TOPIC_NAME = "customer-topic";
+    private static final String CUSTOMER_AVRO_TOPIC_NAME = "customer-avro-topic";
     private static final String MESSAGE_KEY = "customer_v1";
 
     public static void main(String[] args) {
@@ -44,11 +46,10 @@ public class KafkaAvroProducerV1 {
             public void onCompletion(RecordMetadata metadata, Exception exception) {
 
                 if (exception == null) {
-                    System.out.println("send is successful");
-                    System.out.println(metadata.topic());
+                    log.info("send is successful");
+                    log.info(metadata.topic());
                 } else {
-                    System.err.println("There was an exception while sending message to the customer Topic");
-                    exception.printStackTrace(System.err);
+                    log.error("There was an exception while sending message to the customer Topic", exception);
                 }
             }
         });
