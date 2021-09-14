@@ -340,7 +340,12 @@ Writing a V2 kafka Consumer
 Add both customers V1 and V2 to topic before starting V2 consumer.
 
 
+Kafka Schema Registry deep dive
+-------------------------------
 
+Managing schemas efficiently
+-----------------------------
+Some recommendation from Teacher re: publishing of schema files , as a jar file with avsc files like a dependent library
 
 
 
