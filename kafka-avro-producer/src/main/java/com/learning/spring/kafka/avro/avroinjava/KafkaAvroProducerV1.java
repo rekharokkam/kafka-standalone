@@ -29,12 +29,12 @@ public class KafkaAvroProducerV1 {
         KafkaProducer<String, Customer> customerV1KafkaProducer = new KafkaProducer<String, Customer>(kafkaAvroProducerProperties);
 
         Customer customerV1 = Customer.newBuilder()
-                .setFirstName("John")
-                .setAge(26)
-//                .setAutomatedEmail(false)
-                .setHeight(185.5f)
-                .setLastName("Doe")
-                .setWeight(85.6f)
+                .setFirstName("double ka")
+                .setAge(29)
+                .setAutomatedEmail(false)
+                .setHeight(189.5f)
+                .setLastName("meeta")
+                .setWeight(189.6f)
                 .build();
 
         ProducerRecord<String, Customer> customerV1ProducerRecord =
