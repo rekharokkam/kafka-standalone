@@ -11,8 +11,6 @@ import org.apache.avro.specific.SpecificDatumWriter;
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 @Slf4j
 public class SpecificRecordCustomerComplexExample {

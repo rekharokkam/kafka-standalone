@@ -58,6 +58,8 @@ Start both zookeeper and kafka together
 ----------------------------------------
 zookeeper-server-start -daemon /usr/local/etc/kafka/zookeeper.properties & kafka-server-start /usr/local/etc/kafka/server.properties
 
+Another way of starting kafka is - docker container - docker run confluentinc/cp-enterprise-kafka:5.2.2
+This didnt work for me as it was asking for zookeeper
 
 Chapter - Command Line Interface 101
 ------------------------------------

@@ -1,6 +1,6 @@
 package com.learning.spring.kafka.avro.avroinjava;
 
-import com.learning.spring.kafka.avro.CustomerV1;
+import com.learning.spring.kafka.avro.Customer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -36,18 +36,18 @@ public class KafkaAvroConsumerV1 {
     }
 
     public void consumeMessage () {
-        KafkaConsumer <String, CustomerV1> kafkaConsumer = new KafkaConsumer<String, CustomerV1>(kafkaAvroConsumerProperties);
+        KafkaConsumer <String, Customer> kafkaConsumer = new KafkaConsumer<String, Customer>(kafkaAvroConsumerProperties);
         kafkaConsumer.subscribe(Collections.singleton(TOPIC_NAME));
 
         System.out.println("Waiting for data");
 
         while (true) {
-            ConsumerRecords<String, CustomerV1> consumerRecords = kafkaConsumer.poll(Duration.ofMillis(500));
+            ConsumerRecords<String, Customer> consumerRecords = kafkaConsumer.poll(Duration.ofMillis(500));
 
-            for (ConsumerRecord<String, CustomerV1> consumerRecord: consumerRecords) {
-                CustomerV1 customerV1 = consumerRecord.value();
+            for (ConsumerRecord<String, Customer> consumerRecord: consumerRecords) {
+                Customer customerV1 = consumerRecord.value();
                 System.out.printf("Key : %s" , consumerRecord.key() + "\n\n");
-                System.out.printf("Each customer V1 : %s", customerV1);
+                System.out.printf("Each customer V1 : %s", customerV1 + "\n\n");
 
                 if (customerV1.getAge() > 60) {
                     System.out.println("Oh we have a veteran");

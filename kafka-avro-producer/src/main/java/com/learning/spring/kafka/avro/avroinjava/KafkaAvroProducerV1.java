@@ -1,6 +1,6 @@
 package com.learning.spring.kafka.avro.avroinjava;
 
-import com.learning.spring.kafka.avro.CustomerV1;
+import com.learning.spring.kafka.avro.Customer;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.*;
@@ -26,19 +26,19 @@ public class KafkaAvroProducerV1 {
        kafkaAvroProducerProperties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class.getName());
        kafkaAvroProducerProperties.setProperty("schema.registry.url", "http://localhost:8081");
 
-        KafkaProducer<String, CustomerV1> customerV1KafkaProducer = new KafkaProducer<String, CustomerV1>(kafkaAvroProducerProperties);
+        KafkaProducer<String, Customer> customerV1KafkaProducer = new KafkaProducer<String, Customer>(kafkaAvroProducerProperties);
 
-        CustomerV1 customerV1 = CustomerV1.newBuilder()
+        Customer customerV1 = Customer.newBuilder()
                 .setFirstName("John")
                 .setAge(26)
-                .setAutomatedEmail(false)
+//                .setAutomatedEmail(false)
                 .setHeight(185.5f)
                 .setLastName("Doe")
                 .setWeight(85.6f)
                 .build();
 
-        ProducerRecord<String, CustomerV1> customerV1ProducerRecord =
-                new ProducerRecord<String, CustomerV1>(CUSTOMER_AVRO_TOPIC_NAME, MESSAGE_KEY, customerV1);
+        ProducerRecord<String, Customer> customerV1ProducerRecord =
+                new ProducerRecord<String, Customer>(CUSTOMER_AVRO_TOPIC_NAME, MESSAGE_KEY, customerV1);
 
         customerV1KafkaProducer.send(customerV1ProducerRecord, new Callback() {
 
