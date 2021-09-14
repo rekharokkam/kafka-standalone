@@ -2,7 +2,7 @@
   "type": "record",
   "namespace": "com.learning.spring.kafka.avro",
   "name": "CustomerV1",
-  "doc": "Avro Schema for Customer version 1",
+  "doc": "Avro Schema for Customer First version",
   "fields": [
     {
       "name": "first_name",

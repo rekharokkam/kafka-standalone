@@ -1,3 +1,4 @@
 rootProject.name = 'kafka-standalone'
 include 'kafka-avro'
+include 'kafka-avro-producer'
 

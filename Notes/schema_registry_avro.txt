@@ -208,7 +208,145 @@ This hands on is an example of Full compatible change.
 2 new fields with defaults are added to Customer V2 - Phone_number and email
 1 field from version 1 is removed - automated_email, this field has default
 
-Backward compatible : C
+Chapter 4 - Setup and Launch kafka
+----------------------------------
+Landoop is the image that comes packaged with UI for schema registry, kafka broker, kafka connect , landoop UI and kafka topics
+From inside the kafka-avro directory run :: "docker-compose up" to bring up landoop UI
+http://localhost:3030 :: landoop UI there by UI for schema-registry, topics, kafka connect and kafka brokers
+
+Download confluent tools in one of 2 ways
+1) by downloading confluent tools, this approach didnt work for me
+2) running the commands
+     docker pull confluentinc/cp-schema-registry
+     docker run -it --rm --net=host confluentinc/cp-schema-registry bash
+
+Once inside the container execute the command
+    - kafka-avro-console-consumer
+
+
+Chapter 5 - Confluent Schema Registry and Kafka
+------------------------------------------------
+
+Confluent Schema Registry
+-------------------------
+Schema registry is to store and retrieve schemas for Consumer and Producers
+Enforce Backward / Forward / Full Compatibility on Topics
+Decrease the size of data payload sent to Kafka
+
+Operations - Refer to - https://docs.confluent.io/platform/current/schema-registry/develop/api.html  for REST operations
+----------
+We add Schemas
+Retrieve a Schema
+Update a Schema
+Delete a Schema
+All these operations through REST API
+
+Schemas can be applied to Keys and or values
+
+to access landoop UI - Run docker-compose up and then access the UI :: http://localhost:3030
+
+I created the topic - kafka-topics --bootstrap-server localhost:9092 --topic customer-topic --create --partitions 3 --replication-factor 1
+
+Avro Console Producer and Console Consumer
+------------------------------------------
+I created the topic as :: kafka-topics --bootstrap-server localhost:9092 --topic customer-avro-topic --partitions 3 --replication-factor 1 --create
+
+I ran confluent tools image :: docker run -it --rm --net=host confluentinc/cp-schema-registry bash
+
+kafka-avro-console-producer
+---------------------------
+
+I ran confluent tools image :: docker run -it --rm --net=host confluentinc/cp-schema-registry bash
+
+From inside the container I ran ::  kafka-avro-console-producer --bootstrap-server localhost:9092 --topic customer-avro-topic --property schema.registry.url=http://localhost:8081 --property value.schema.id=117
+Then added new records -
+
+{"first_name": "John","last_name": "Doe","age": 29,"height": 167.77, "weight": 100, "automated_email": true}
+{"first_name": "John2","last_name": "Doe2","age": 45,"height": 180, "weight": 100, "automated_email": false}
+{"first_name": "John3","last_name": "Doe3","age": 51,"height": 178, "weight": 100, "automated_email": true}
+{"first_name": "John4","last_name": "Doe4","age": 83,"height": 199, "weight": 100, "automated_email": true}
+{"first_name": "John5","last_name": "Doe5","age": 83,"height": 199, "weight": 100,  "automated_email": false}
+{"first_name": "John6","last_name": "Doe6","age": 83,"height": 199, "weight": 100,  "automated_email": true}
+{"first_name": "John7","last_name": "Doe7","age": 83,"height": 199, "weight": 100,  "automated_email": false}
+{"first_name": "John8","last_name": "Doe8","age": 83,"height": 199, "weight": 100,  "automated_email": true}
+
+{"first_name": "John9","last_name": "Doe9","age": 83,"height": 199, "weight": 100,  "automated_email": true}
+{"first_name": "John10","last_name": "Doe10","age": 83,"height": 199, "weight": 100,  "automated_email": false}
+
+{"first_name": "John11","last_name": "Doe10","age": 83,"height": 199, "weight": 100, "automated_email": true}
+{"first_name": "John12","last_name": "Doe12","age": 83,"height": 199, "weight": 67, "automated_email": false}
+
+Not sure why , when I post a customer like - {"first_name": "John11","last_name": "Doe10","age": 83,"height": 199, "weight": 100} requests fail with an exception even though automated_email is supposed to be optional and have default value
+
+kafka-avro-console-consumer
+----------------------------
+
+I ran confluent tools image :: docker run -it --rm --net=host confluentinc/cp-schema-registry bash
+
+From inside the container I ran ::  kafka-avro-console-producer --bootstrap-server localhost:9092 --topic customer-avro-topic --property schema.registry.url=http://localhost:8081 --property value.schema.id=117
+
+kafka-avro-console-consumer --bootstrap-server localhost:9092 --topic customer-avro-topic --partition 2 --property schema.registry.url=http://localhost:8081
+If no offset is specified this consumer reads from the end of the topic/partition (messages posted after the consumer started)
+
+kafka-avro-console-consumer --bootstrap-server localhost:9092 --topic customer-avro-topic --partition 2 --offset 1 --property schema.registry.url=http://localhost:8081
+This consumer read from the offset 1 (including message with offset 1)
+
+kafka-avro-console-consumer --bootstrap-server localhost:9092 --topic customer-avro-topic --partition 2 --from-beginning --property schema.registry.url=http://localhost:8081
+Read all the messages on the partition
+
+kafka-avro-console-consumer --bootstrap-server localhost:9092 --topic customer-avro-topic  --from-beginning --property schema.registry.url=http://localhost:8081
+If no Partition is specified then this consumer will read from all the partitions
+
+A schema cannot be evolved unless its compatible with the previous version
+
+Kafka Avro Producer in Java
+----------------------------
+All details are in the class KafkaAvroProdicerV1.java, This class only produces the message,
+for consuming the message I used console consumer as -
+    kafka-avro-console-consumer --bootstrap-server localhost:9092 --topic customer-topic --from-beginning --property schema.registry.url=http://localhost:8081
+
+If Topic does not exist then it gets auto created by KafkaProducer based on the default settings in kafka/BootStrap Server
+
+Kafka AVRO Consumer in Java
+---------------------------
+
+PS - Use the avro files (customerv1.avsc and customerv2.avsc) interchangeably depending on what u r trying to achieve
+backward or forward compatibility. Only thing u need to change is the name of the record
+
+"name": "CustomerV1", - make this Customer depending on the use case.
+
+
+I also added logging - refer to the build.gradle under kafka-avro module
+Removed the default log-back logging used by Spring-boot and added spring-boot supported log4j2 logging.
+Also refer to log4j2.xml under resources for details.
+
+    implementation ("org.springframework.boot:spring-boot-starter-web:${springboot_version}") {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+    implementation "org.springframework.boot:spring-boot-starter-log4j2:${springboot_version}"
+
+
+Reminder on Schema Evolution
+---------------------------
+V1 Producer and V2 consumer - BACKWARD compatible
+V2 producer and V1 Consumer - FORWARD compatible
+if both BACKWARD  and FORWARD compatible then called FULL compatible
+
+Writing a V2 Kafka Producer
+---------------------------
+
+Writing a V2 kafka Consumer
+---------------------------
+Add both customers V1 and V2 to topic before starting V2 consumer.
+
+
+Kafka Schema Registry deep dive
+-------------------------------
+
+Managing schemas efficiently
+-----------------------------
+Some recommendation from Teacher re: publishing of schema files , as a jar file with avsc files like a dependent library
+
 
 
 

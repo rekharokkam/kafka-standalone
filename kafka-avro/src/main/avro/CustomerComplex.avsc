@@ -37,17 +37,16 @@
     },
     {
       "name": "customer_emails",
-      "type": {
+      "type": ["null", {
         "type": "array",
-        "items": {
-          "type": "string",
-          "name": "Customer_Email",
-          "default": []
-        }
-      }
+        "items": "string"
+      }  ],
+      "default": null
     },
     {
-      "name": "customer_address", "type": "com.learning.spring.kafka.avro.CustomerAddress"
+      "name": "customer_address",
+      "type": ["null", "com.learning.spring.kafka.avro.CustomerAddress"],
+      "default": null
     },
     {
       "name": "customer_signup_ts",
@@ -56,7 +55,23 @@
         "logicalType": "timestamp-millis"
       },
       "doc": "timestamp the user singed up since Epoch time - since 1st January 1970 UTC 00:00:00.000 UTC"
+    },
+    {
+      "name": "salary",
+      "type": "string",
+      "doc": "salary of the customer. Using decimal here created Java ByteBuffer which is hard to work with so using String."
     }
+
+//    {
+//      "name": "salary",
+//      "type": {
+//        "type": "bytes",
+//        "logicalType": "decimal",
+//        "precision": 4,
+//        "scale": 4
+//      },
+//      "doc": "salary of the customer."
+//    }
   ]
 }
 

@@ -58,6 +58,8 @@ Start both zookeeper and kafka together
 ----------------------------------------
 zookeeper-server-start -daemon /usr/local/etc/kafka/zookeeper.properties & kafka-server-start /usr/local/etc/kafka/server.properties
 
+Another way of starting kafka is - docker container - docker run confluentinc/cp-enterprise-kafka:5.2.2
+This didnt work for me as it was asking for zookeeper
 
 Chapter - Command Line Interface 101
 ------------------------------------
@@ -139,7 +141,7 @@ Above command resets the offset of first-consumer-group to earliest (0 in this c
 Above command will reset the offset only by few indexes so the consumer group can read only those and not all from beginning
 
 Resetting offset based on a particular offset
-    - kafka-consumer-groups --bootstrap-server kafka-tte-app.prod.target.com:9093 --group ccorders-v3-prod --command-config client-ssl.properties --topic fit-sparta-retail-transactions:0 --reset-offsets  --to-offset 319814955  --execute
+    - kafka-consumer-groups --bootstrap-server kafka-tte-app.prod.target.com:9093 --group ccorders-v3-prod --command-config client-prod-ssl.properties --topic fit-sparta-retail-transactions:0 --reset-offsets  --to-offset 319814955  --execute
 
 Decode and encoded file :: base64 -d -i <input file name> -o <output file name> OR base64 -d copy_and_paste_the_string
 

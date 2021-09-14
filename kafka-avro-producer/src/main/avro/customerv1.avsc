@@ -2,7 +2,7 @@
   "type": "record",
   "namespace": "com.learning.spring.kafka.avro",
   "name": "Customer",
-  "doc": "Avro Schema for Customer next version",
+  "doc": "Avro Schema for Customer First version",
   "fields": [
     {
       "name": "first_name",
@@ -30,16 +30,10 @@
       "doc": "weight of the customer in pounds"
     },
     {
-      "name": "phone_number",
-      "type": ["null", "string"],
-      "default": null,
-      "doc": "Phone Number which is an Optional field"
-    },
-    {
-      "name": "email",
-      "type": "string",
-      "default": "missing@example.com",
-      "doc": "Email address of the customer"
+      "name": "automated_email",
+      "type": "boolean",
+      "default": true,
+      "doc": "Indicates if the customer opted for automated marketing emails, by default its true"
     }
   ]
 }
