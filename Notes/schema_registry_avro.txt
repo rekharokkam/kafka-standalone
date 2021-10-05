@@ -338,7 +338,7 @@ Writing a V2 Kafka Producer
 Writing a V2 kafka Consumer
 ---------------------------
 Add both customers V1 and V2 to topic before starting V2 consumer.
-
+Refer to KafkaAvroConsumerV2.java for kafkaConsumer.commitSync(); // to commit the offset
 
 Kafka Schema Registry deep dive
 -------------------------------
@@ -348,6 +348,8 @@ Managing schemas efficiently
 Some recommendation from Teacher re: publishing of schema files , as a jar file with avsc files like a dependent library
 
 
+Chapter 6 - Confluent REST Proxy
+--------------------------------
 
 
 
