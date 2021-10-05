@@ -365,6 +365,21 @@ High throughput producer
 ------------------------
 
 
+Chapter - Kafka Elasticsearch Consumer and Advanced Configurations
+------------------------------------------------------------------
+
+Setting up Elasticsearch in the cloud
+-------------------------------------
+I setup elasticsearch in the cloud through bonsai.io. user_name is rekha_bg@yahoo.com and password is yokeyyokey
+cluster name - KAFKA_STANDALONE_cluster.
+URL to access the cluster - https://app.bonsai.io/clusters/kafka-standalone-cou-1278981902/
+
+
+
+
+
+
+
 
 
 
