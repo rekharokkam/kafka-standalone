@@ -30,7 +30,6 @@ public class KafkaAvroConsumerV2 {
         kafkaAvroConsumerProperties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, OFFRESET_RESET_CONFIG);
         kafkaAvroConsumerProperties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer .class.getName());
         kafkaAvroConsumerProperties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class.getName());
-        kafkaAvroConsumerProperties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class.getName());
         kafkaAvroConsumerProperties.setProperty("schema.registry.url", "http://localhost:8081");
         kafkaAvroConsumerProperties.setProperty("specific.avro.reader", "true");
     }
