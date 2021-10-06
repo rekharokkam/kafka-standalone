@@ -374,6 +374,70 @@ I setup elasticsearch in the cloud through bonsai.io. user_name is rekha_bg@yaho
 cluster name - KAFKA_STANDALONE_cluster.
 URL to access the cluster - https://app.bonsai.io/clusters/kafka-standalone-cou-1278981902/
 
+Elasticsearch 101
+-----------------
+in the console (click on the Menu item "console" on the left Menu). I executed a REST api to get all the information about the cluster
+GET /_cat/nodes?v
+
+to get the list of all indices
+GET /_cat/indices?v
+
+Creating an index -
+PUT /twitter
+Response I got
+{
+  "acknowledged": true,
+  "shards_acknowledged": true,
+  "index": "twitter"
+}
+Then run GET /_cat/indices?v again. Will show details of twitter index
+
+response I got
+health status index                     uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   twitter L19J7L2zQUCa91eRIM620g   1   1          0            0       416b           208b
+
+Inserting data into the Index (/twitter) and type (/twitter/tweets) -
+PUT /twitter/tweets/1
+Body
+{
+   "course": "Kafka for Beginners",
+   "Instructor": "Stephane M",
+   "module": "ElasticSearch"
+}
+
+Response I received
+{
+  "_index": "twitter",
+  "_type": "tweets",
+  "_id": "1",
+  "_version": 1,
+  "result": "created",
+  "_shards": {
+    "total": 2,
+    "successful": 2,
+    "failed": 0
+  },
+  "_seq_no": 0,
+  "_primary_term": 1
+}
+
+If u try to PUT again it updates the same record. version in the response will be 2 this time.
+
+if u want to get the data run :: GET /twitter/tweets/1
+
+if u want to delete the record :: DELETE /twitter/tweets/1
+
+If u want to delete the index :: DELETE /twitter
+Response
+{
+  "acknowledged": true
+}
+
+Consumer Part - 1
+-----------------
+
+
+
 
 
 
