@@ -110,6 +110,9 @@ Command to start the consumers in a group -
 	kafka-console-consumer --bootstrap-server localhost:9092 --topic first-topic --group second-consumer-group
 Command to start the consumers in a new group to read from start of the topic from beginning
 	kafka-console-consumer --bootstrap-server localhost:9092 --topic first-topic --group second-consumer-group --from-beginning
+Command to start a consumer in a group with certs
+    kafka-console-consumer --bootstrap-server kafka-tte-app.dev.target.com:9093 --topic cc-serverdb-tap2aws --consumer.config client-ssl.properties --group ccordersv3-local-group --from-beginning
+
 
 Kafka remembers the offset(index) on every topic that consumer(s) of a group consumed. If u start a consumer of an existing group on existing topic with --from-beginning command it only reads those messages that are not already consumed by an active or a non-active consumer of the same group.
 If u start new consumer on new group for a topic that has a bunch of messages on each partition (offset of each partition is > zero) then by default LAG for the new consumer group is zero, meaning new group will not read old messages, will read only new messages, if u want this group to read all the messages from the beginning , then use  --from-beginning option
@@ -425,6 +428,22 @@ If u try to PUT again it updates the same record. version in the response will b
 
 if u want to get the data run :: GET /twitter/tweets/1
 
+Response I got
+{
+  "_index": "twitter",
+  "_type": "tweets",
+  "_id": "1",
+  "_version": 2,
+  "_seq_no": 1,
+  "_primary_term": 1,
+  "found": true,
+  "_source": {
+    "course": "Kafka for Beginners",
+    "Instructor": "Stephane M",
+    "module": "ElasticSearch"
+  }
+}
+
 if u want to delete the record :: DELETE /twitter/tweets/1
 
 If u want to delete the index :: DELETE /twitter
@@ -435,7 +454,60 @@ Response
 
 Consumer Part - 1
 -----------------
-
+Calling the ElasticSearchConsumer class without creating the index "twitter" will fail. Please make sure index "twitter" is available.
+U can do that by going to elastic search console and running
+GET /twitter
+Response I received
+{
+  "twitter": {
+    "aliases": {},
+    "mappings": {
+      "properties": {
+        "Instructor": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "course": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "module": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+    },
+    "settings": {
+      "index": {
+        "number_of_shards": "1",
+        "auto_expand_replicas": null,
+        "provided_name": "twitter",
+        "creation_date": "1635781357068",
+        "priority": "0",
+        "number_of_replicas": "1",
+        "uuid": "LozzR9xtQuqhVFE5BTxlWQ",
+        "version": {
+          "created": "7100299"
+        }
+      }
+    }
+  }
+}
 
 
 
