@@ -518,6 +518,34 @@ Consumer Part 2
 ----------------
 Consume the message from twitter topic and send to Elastic search
 
+Delivery Semantics for Consumers
+--------------------------------
+There are 3 modes of commiting the offsets
+1) At Most Once
+
+    Offsets are commited as soon as message batch is received. If processing goes wrong then messages will not be read again.
+    there by causing message loss.
+
+    Ex - Lets say 5 messages are read in batch, consumer committed the offset as soon as batch was read so offset is at 5
+    processing of 3 went fine and then consumer crashed leaving 2 unprocessed messages.
+    In this case When consumer group comes back up it will start reading the messages from offset 5 so 2 previous messages are skipped.
+
+    There is a big chance of loosing data.
+
+2) At Least Once
+
+    Is default behavior. Offsets are committed only after message processing is successful. This might result in duplicate messages.
+    Consumer should implement Idempotent processing of data.
+
+    Ex - Lets say 5 messages are read in batch, consumer starts processing the messages.
+         Processing of 3 went fine and then consumer crashed leaving 2 unprocessed messages. Offset is not committed yet.
+         In this case When consumer group comes back up it will start reading the messages from offset 0 resulting in 3 duplicate messages.
+         Once all 5 messages are successfully processed Offset is committed at 5.
+
+3) Exactly Once
+
+    Can be achieved for kafka to kafka workflows using kafka streams. This also uses idempotent consumer.
+
 
 
 
