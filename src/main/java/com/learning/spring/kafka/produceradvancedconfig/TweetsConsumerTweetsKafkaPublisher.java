@@ -21,7 +21,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-public class TwitterProducer {
+public class TweetsConsumerTweetsKafkaPublisher {
 
     private static final String CONSUMER_KEY = "F7JikmUt6SkQHYiZXFbgVpTZ4";
     private static final String CONSUMER_SECRET = "4yKV8qO1ttlYX3E31BWTYqJpXYDoLQv3FBI7lpvYOTqp97cRUG";
@@ -29,10 +29,11 @@ public class TwitterProducer {
     private static final String ACCESS_TOKEN_SECRET = "6BQP5FYgYAchSITWuTYcvBKYjDc1Pa4apXHnOwgYODZNc";
     private static final List<String> TWEET_TERMS = Arrays.asList("kafka");
 
-    private static final String TWITTER_TWEETS_TOPIC_NAME = "twitter-tweets-topic";
+    private static final String TWITTER_TWEETS_TOPIC_NAME = "twitter-tweets";
+    private static final String KAFKA_TOPIC_KEY = "TWEETS_KEY";
     private static final String BOOTSTRAP_SERVER = "localhost:9092";
 
-    private Logger logger = LoggerFactory.getLogger(TwitterProducer.class.getName());
+    private Logger logger = LoggerFactory.getLogger(TweetsConsumerTweetsKafkaPublisher.class.getName());
 
     public Client createTwitterClient (BlockingQueue<String> msgQueue) {
 
@@ -98,7 +99,7 @@ public class TwitterProducer {
 
             if (null != msg) {
                 logger.info(msg);
-                twitterTweetsKafkaProducer.send(new ProducerRecord<>(TWITTER_TWEETS_TOPIC_NAME, null, msg), new Callback() {
+                twitterTweetsKafkaProducer.send(new ProducerRecord<>(TWITTER_TWEETS_TOPIC_NAME, KAFKA_TOPIC_KEY, msg), new Callback() {
                     @Override
                     public void onCompletion(RecordMetadata metadata, Exception exception) {
 
@@ -133,6 +134,6 @@ public class TwitterProducer {
     }
 
     public static void main(String[] args) {
-        new TwitterProducer ().run();
+        new TweetsConsumerTweetsKafkaPublisher().run();
     }
 }

@@ -236,7 +236,11 @@ As far as possible - use latest client irrespective of broker versions
 
 Chapter - Kafka Twitter Producer and Advanced Configurations
 -------------------------------------------------------------
-After starting TwitterProducer class , run the console consumer with the command - kafka-console-consumer --bootstrap-server localhost:9092 --topic twitter-tweets-topic
+
+kafka-topics --bootstrap-server localhost:9092 --topic twitter-tweets --create --partitions 3 --replication-factor 1
+
+After starting TwitterProducer class , run the console consumer with the command -
+    kafka-console-consumer --bootstrap-server localhost:9092 --topic twitter-tweets
 
         //flush data.
         //Flush actually causes queued records to be sent and blocks until they are completed (successfully or otherwise).
@@ -510,6 +514,9 @@ Response I received
 }
 
 
+Consumer Part 2
+----------------
+Consume the message from twitter topic and send to Elastic search
 
 
 
