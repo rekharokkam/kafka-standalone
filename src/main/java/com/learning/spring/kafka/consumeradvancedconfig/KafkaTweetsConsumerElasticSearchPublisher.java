@@ -27,7 +27,7 @@ public class KafkaTweetsConsumerElasticSearchPublisher {
     private static final String BOOTSTRAP_SERVER = "localhost:9092";
     private static final String GROUP_ID = "tweets-consumer-group";
     private static final String OFFRESET_RESET_CONFIG = "earliest";
-    private static final String ENABLE_AUTO_COMMIT = "false";
+    private static final String ENABLE_AUTO_COMMIT = "true";
 
     private Properties kafkaConsumerProperties = new Properties();
     private RestHighLevelClient restHighLevelClient;

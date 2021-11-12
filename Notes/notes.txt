@@ -556,6 +556,49 @@ This concept of idempotent applies to database inserts as well.
 Check out the class - KafkaTweetsConsumerElasticSearchPublisher
 
 
+Consumer Poll Behavior
+----------------------
+Kafka Consumers have "Poll" model.
+Having poll model helps the consumers on deciding some of the factors like
+    - Where in the log they want to consume
+    - how fast they want to consume
+    - and ability to replay events
+
+            .poll (Duration timeout)
+CONSUMER -----------------------------> Broker
+         <-----------------------------
+         Return data immediately if possible
+         OR
+         Return "empty" after timeout
+
+Some of the properties are
+
+    - fetch.min.bytes :: default 1 ::
+        Controls how much data you want to pull at least in each request.
+        Helps improving throughput and decreasing request number
+        Costs a little bit of latency
+
+    - max.poll.records :: default 500 ::
+        Controls how many records to receive per poll request
+        Increase if the messages are very small and lot of RAM is available and you want to consume lot of messages at the same time.
+        Good monitor how many records are fetched per poll requests. If necessary increase it to get better throughput
+
+    - max.partitions.fetch.bytes :: default 1 MB ::  (I couldnt find this setting)
+        Max data returned by the broker per partition
+        If you read from lot of partitions like 100 partitions, you will need lots of Memory
+
+    - fetch.max.bytes :: default 50 MB ::
+        Maximum data returned for each fetch request (covers multiple partitions)
+        Consumer performs multiple fetches in parallel
+
+These are default settings and need not be changed.
+
+
+
+
+
+
+
 
 
 
