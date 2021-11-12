@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Properties;
 
 import static com.learning.spring.kafka.consumeradvancedconfig.ConsumerHelper.createElasticClient;
+import static com.learning.spring.kafka.consumeradvancedconfig.ConsumerHelper.extractJsonAttributeValue;
 
 @Slf4j
 public class KafkaTweetsConsumerElasticSearchPublisher {
@@ -26,6 +27,7 @@ public class KafkaTweetsConsumerElasticSearchPublisher {
     private static final String BOOTSTRAP_SERVER = "localhost:9092";
     private static final String GROUP_ID = "tweets-consumer-group";
     private static final String OFFRESET_RESET_CONFIG = "earliest";
+    private static final String ENABLE_AUTO_COMMIT = "false";
 
     private Properties kafkaConsumerProperties = new Properties();
     private RestHighLevelClient restHighLevelClient;
@@ -44,6 +46,7 @@ public class KafkaTweetsConsumerElasticSearchPublisher {
         kafkaConsumerProperties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         kafkaConsumerProperties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, GROUP_ID);
         kafkaConsumerProperties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, OFFRESET_RESET_CONFIG);
+        kafkaConsumerProperties.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, ENABLE_AUTO_COMMIT);
 
         kafkaConsumer = new KafkaConsumer<String, String>(kafkaConsumerProperties);
         kafkaConsumer.subscribe(Arrays.asList(TOPIC_NAME)); // can subscribe to more than one topic
@@ -60,10 +63,15 @@ public class KafkaTweetsConsumerElasticSearchPublisher {
                 log.info("Key : {} :: value : " , consumerRecord.key() , consumerMessage);
                 log.info("Partition : {} :: offset  : {}", consumerRecord.partition(), consumerRecord.offset() + "\n");
 
+                //This is extracted for making an insert into elastic search idempotenet
+                String tweetId = extractJsonAttributeValue ("id_str", consumerMessage);
+                log.info("id_str of a tweet is : {}", tweetId);
+
                 //this is where we insert data into elastic search
                 IndexRequest indexRequest = new IndexRequest(
                         "twitter",
-                        "tweets"
+                        "tweets",
+                        tweetId
                 ).source(consumerMessage, XContentType.JSON);
 
                 try {
@@ -98,6 +106,5 @@ public class KafkaTweetsConsumerElasticSearchPublisher {
             log.info("We are done");
 
         }));
-
     }
 }

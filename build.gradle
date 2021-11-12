@@ -49,6 +49,7 @@ dependencies {
     implementation "com.twitter:hbc-core:${twitter_dependency_version}" //twitter dependency
     implementation "org.elasticsearch.client:elasticsearch-rest-high-level-client:${elasticsearch_dependency_version}" //elastic search dependency
     implementation "org.elasticsearch:elasticsearch:${elasticsearch_dependency_version}"
+    implementation 'com.google.code.gson:gson:2.8.7'
 
     compileOnly "org.projectlombok:lombok:${lombok_version}"
 

@@ -1,5 +1,7 @@
 package com.learning.spring.kafka.consumeradvancedconfig;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -33,6 +35,14 @@ public class ConsumerHelper {
 
         RestHighLevelClient client = new RestHighLevelClient(restClientBuilder);
         return client;
+    }
+
+    public static String extractJsonAttributeValue (String key, String JsonString) {
+         return JsonParser.parseString(JsonString)
+                 .getAsJsonObject()
+                 .get(key)
+                 .getAsString();
+
     }
 
 }

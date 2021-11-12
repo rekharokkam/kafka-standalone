@@ -27,7 +27,7 @@ public class TweetsConsumerTweetsKafkaPublisher {
     private static final String CONSUMER_SECRET = "4yKV8qO1ttlYX3E31BWTYqJpXYDoLQv3FBI7lpvYOTqp97cRUG";
     private static final String ACCESS_TOKEN = "2746149770-u6SdzYuuehtoIVKNUQYg6mMLQ5ybmnXHuOnOQst";
     private static final String ACCESS_TOKEN_SECRET = "6BQP5FYgYAchSITWuTYcvBKYjDc1Pa4apXHnOwgYODZNc";
-    private static final List<String> TWEET_TERMS = Arrays.asList("kafka");
+    private static final List<String> TWEET_TERMS = Arrays.asList("java");
 
     private static final String TWITTER_TWEETS_TOPIC_NAME = "twitter-tweets";
     private static final String KAFKA_TOPIC_KEY = "TWEETS_KEY";

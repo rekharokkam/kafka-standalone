@@ -547,8 +547,13 @@ There are 3 modes of commiting the offsets
     Can be achieved for kafka to kafka workflows using kafka streams. This also uses idempotent consumer.
 
 
+Consumer Part 3 Idempotence
+---------------------------
 
+Kafka Consumer should always be idempotent. In order to achieve this tweetsId is sent in the request to insert tweets.
+This concept of idempotent applies to database inserts as well.
 
+Check out the class - KafkaTweetsConsumerElasticSearchPublisher
 
 
 
