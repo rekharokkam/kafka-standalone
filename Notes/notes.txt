@@ -583,7 +583,7 @@ Some of the properties are
         Increase if the messages are very small and lot of RAM is available and you want to consume lot of messages at the same time.
         Good monitor how many records are fetched per poll requests. If necessary increase it to get better throughput
 
-    - max.partitions.fetch.bytes :: default 1 MB ::  (I couldnt find this setting)
+    - max.partition.fetch.bytes :: default 1 MB ::
         Max data returned by the broker per partition
         If you read from lot of partitions like 100 partitions, you will need lots of Memory
 
@@ -591,7 +591,30 @@ Some of the properties are
         Maximum data returned for each fetch request (covers multiple partitions)
         Consumer performs multiple fetches in parallel
 
+    - max.poll.interval.ms :: default 300000 ::
+        whats the frequency of polling the topic
+
 These are default settings and need not be changed.
+
+Consumer Offset commit Strategies
+---------------------------------
+
+2 strategies for committing the offsets
+
+    1) enable.auto.commit = true (default) and synchronous processing of batches.
+  This property means there is no new poll on the broker until the current set of records are processed.
+    2) enable.auto.commit = false means manually committing the offset when prossing finishes.
+
+When enable.auto.commit= true , auto.commit.interval.ms = 5000 by default will be set,
+which is 5 secs by default every time u call .poll()
+
+Its a good idea to have enable.auto.commit = false and do a synchronous processing of batches
+
+
+
+
+
+
 
 
 
