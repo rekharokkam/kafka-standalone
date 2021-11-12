@@ -603,10 +603,10 @@ Consumer Offset commit Strategies
 
     1) enable.auto.commit = true (default) and synchronous processing of batches.
   This property means there is no new poll on the broker until the current set of records are processed.
-    2) enable.auto.commit = false means manually committing the offset when prossing finishes.
+    2) enable.auto.commit = false means manually committing the offset when processing finishes.
 
 When enable.auto.commit= true , auto.commit.interval.ms = 5000 by default will be set,
-which is 5 secs by default every time u call .poll()
+which is 5 secs by default, every time u call .poll()
 
 Its a good idea to have enable.auto.commit = false and do a synchronous processing of batches
 
