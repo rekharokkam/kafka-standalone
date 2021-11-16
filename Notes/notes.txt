@@ -628,6 +628,19 @@ Since updates happe in batch outside of for loop not able to get the details of 
 Poll duration is mainly determined by the source code - ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofMillis(20000));
 
 
+Consumer Offsets reset Behavior
+-------------------------------
+
+If connsumer is down for more than the topic's retention policy then offsets are missed/lost
+Ex - if a topic's retention policy is 7 days , consumer is down beyond 7 days meaning there is no update on the offset from the consumer
+for more than 7 days then, for that consumer offset becomes invalid and the data is lost.
+
+different values for offset reset values are -
+auto.offset.reset = latest :: Will read data from the end of the log
+auto.offset.reset = earliest :: will read data from the start of the log
+auto.offset.reset = none :: Will throw exception if no offset is found
+
+This behavior can be controlled by the broker settings :: offset.retention.minutes
 
 
 
