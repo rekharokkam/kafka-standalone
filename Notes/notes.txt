@@ -643,6 +643,14 @@ auto.offset.reset = none :: Will throw exception if no offset is found
 This behavior can be controlled by the broker settings :: offset.retention.minutes
 
 
+Replaying data
+--------------
+reset the offset on a specific partition ::
+    - kafka-consumer-groups --bootstrap-server localhost:9092 --group tweets-consumer-group --topic twitter-tweets:2 --reset-offsets --to-offset 15 --execute
+
+reset the offset to the start of the log ::
+    - kafka-consumer-groups --bootstrap-server localhost:9092 --group tweets-consumer-group --topic twitter-tweets:2 --reset-offsets --to-earliest --execute
+
 
 
 
