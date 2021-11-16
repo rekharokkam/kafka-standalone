@@ -110,6 +110,9 @@ Command to start the consumers in a group -
 	kafka-console-consumer --bootstrap-server localhost:9092 --topic first-topic --group second-consumer-group
 Command to start the consumers in a new group to read from start of the topic from beginning
 	kafka-console-consumer --bootstrap-server localhost:9092 --topic first-topic --group second-consumer-group --from-beginning
+Command to start a consumer in a group with certs
+    kafka-console-consumer --bootstrap-server kafka-tte-app.dev.target.com:9093 --topic cc-serverdb-tap2aws --consumer.config client-ssl.properties --group ccordersv3-local-group --from-beginning
+
 
 Kafka remembers the offset(index) on every topic that consumer(s) of a group consumed. If u start a consumer of an existing group on existing topic with --from-beginning command it only reads those messages that are not already consumed by an active or a non-active consumer of the same group.
 If u start new consumer on new group for a topic that has a bunch of messages on each partition (offset of each partition is > zero) then by default LAG for the new consumer group is zero, meaning new group will not read old messages, will read only new messages, if u want this group to read all the messages from the beginning , then use  --from-beginning option
@@ -142,6 +145,9 @@ Above command will reset the offset only by few indexes so the consumer group ca
 
 Resetting offset based on a particular offset
     - kafka-consumer-groups --bootstrap-server kafka-tte-app.prod.target.com:9093 --group ccorders-v3-prod --command-config client-prod-ssl.properties --topic fit-sparta-retail-transactions:0 --reset-offsets  --to-offset 319814955  --execute
+
+Resetting offset for a specific Partition
+    - kafka-consumer-groups --bootstrap-server localhost:9092 --group tweets-consumer-group --topic twitter-tweets:2 --reset-offsets --to-offset 15 --execute
 
 Decode and encoded file :: base64 -d -i <input file name> -o <output file name> OR base64 -d copy_and_paste_the_string
 
@@ -233,7 +239,11 @@ As far as possible - use latest client irrespective of broker versions
 
 Chapter - Kafka Twitter Producer and Advanced Configurations
 -------------------------------------------------------------
-After starting TwitterProducer class , run the console consumer with the command - kafka-console-consumer --bootstrap-server localhost:9092 --topic twitter-tweets-topic
+
+kafka-topics --bootstrap-server localhost:9092 --topic twitter-tweets --create --partitions 3 --replication-factor 1
+
+After starting TwitterProducer class , run the console consumer with the command -
+    kafka-console-consumer --bootstrap-server localhost:9092 --topic twitter-tweets
 
         //flush data.
         //Flush actually causes queued records to be sent and blocks until they are completed (successfully or otherwise).
@@ -363,6 +373,309 @@ batch is allocated per partition
 
 High throughput producer
 ------------------------
+
+
+Chapter - Kafka Elasticsearch Consumer and Advanced Configurations
+------------------------------------------------------------------
+
+Setting up Elasticsearch in the cloud
+-------------------------------------
+I setup elasticsearch in the cloud through bonsai.io. user_name is rekha_bg@yahoo.com and password is yokeyyokey
+cluster name - KAFKA_STANDALONE_cluster.
+URL to access the cluster - https://app.bonsai.io/clusters/kafka-standalone-cou-1278981902/
+
+Elasticsearch 101
+-----------------
+in the console (click on the Menu item "console" on the left Menu). I executed a REST api to get all the information about the cluster
+GET /_cat/nodes?v
+
+to get the list of all indices
+GET /_cat/indices?v
+
+Creating an index -
+PUT /twitter
+Response I got
+{
+  "acknowledged": true,
+  "shards_acknowledged": true,
+  "index": "twitter"
+}
+Then run GET /_cat/indices?v again. Will show details of twitter index
+
+response I got
+health status index                     uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   twitter L19J7L2zQUCa91eRIM620g   1   1          0            0       416b           208b
+
+Inserting data into the Index (/twitter) and type (/twitter/tweets) -
+PUT /twitter/tweets/1
+Body
+{
+   "course": "Kafka for Beginners",
+   "Instructor": "Stephane M",
+   "module": "ElasticSearch"
+}
+
+Response I received
+{
+  "_index": "twitter",
+  "_type": "tweets",
+  "_id": "1",
+  "_version": 1,
+  "result": "created",
+  "_shards": {
+    "total": 2,
+    "successful": 2,
+    "failed": 0
+  },
+  "_seq_no": 0,
+  "_primary_term": 1
+}
+
+If u try to PUT again it updates the same record. version in the response will be 2 this time.
+
+if u want to get the data run :: GET /twitter/tweets/1
+
+Response I got
+{
+  "_index": "twitter",
+  "_type": "tweets",
+  "_id": "1",
+  "_version": 2,
+  "_seq_no": 1,
+  "_primary_term": 1,
+  "found": true,
+  "_source": {
+    "course": "Kafka for Beginners",
+    "Instructor": "Stephane M",
+    "module": "ElasticSearch"
+  }
+}
+
+if u want to delete the record :: DELETE /twitter/tweets/1
+
+If u want to delete the index :: DELETE /twitter
+Response
+{
+  "acknowledged": true
+}
+
+Consumer Part - 1
+-----------------
+Calling the ElasticSearchConsumer class without creating the index "twitter" will fail. Please make sure index "twitter" is available.
+U can do that by going to elastic search console and running
+GET /twitter
+Response I received
+{
+  "twitter": {
+    "aliases": {},
+    "mappings": {
+      "properties": {
+        "Instructor": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "course": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "module": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+    },
+    "settings": {
+      "index": {
+        "number_of_shards": "1",
+        "auto_expand_replicas": null,
+        "provided_name": "twitter",
+        "creation_date": "1635781357068",
+        "priority": "0",
+        "number_of_replicas": "1",
+        "uuid": "LozzR9xtQuqhVFE5BTxlWQ",
+        "version": {
+          "created": "7100299"
+        }
+      }
+    }
+  }
+}
+
+
+Consumer Part 2
+----------------
+Consume the message from twitter topic and send to Elastic search
+
+Delivery Semantics for Consumers
+--------------------------------
+There are 3 modes of commiting the offsets
+1) At Most Once
+
+    Offsets are commited as soon as message batch is received. If processing goes wrong then messages will not be read again.
+    there by causing message loss.
+
+    Ex - Lets say 5 messages are read in batch, consumer committed the offset as soon as batch was read so offset is at 5
+    processing of 3 went fine and then consumer crashed leaving 2 unprocessed messages.
+    In this case When consumer group comes back up it will start reading the messages from offset 5 so 2 previous messages are skipped.
+
+    There is a big chance of loosing data.
+
+2) At Least Once
+
+    Is default behavior. Offsets are committed only after message processing is successful. This might result in duplicate messages.
+    Consumer should implement Idempotent processing of data.
+
+    Ex - Lets say 5 messages are read in batch, consumer starts processing the messages.
+         Processing of 3 went fine and then consumer crashed leaving 2 unprocessed messages. Offset is not committed yet.
+         In this case When consumer group comes back up it will start reading the messages from offset 0 resulting in 3 duplicate messages.
+         Once all 5 messages are successfully processed Offset is committed at 5.
+
+3) Exactly Once
+
+    Can be achieved for kafka to kafka workflows using kafka streams. This also uses idempotent consumer.
+
+
+Consumer Part 3 Idempotence
+---------------------------
+
+Kafka Consumer should always be idempotent. In order to achieve this tweetsId is sent in the request to insert tweets.
+This concept of idempotent applies to database inserts as well.
+
+Check out the class - KafkaTweetsConsumerElasticSearchPublisher
+
+
+Consumer Poll Behavior
+----------------------
+Kafka Consumers have "Poll" model.
+Having poll model helps the consumers on deciding some of the factors like
+    - Where in the log they want to consume
+    - how fast they want to consume
+    - and ability to replay events
+
+            .poll (Duration timeout)
+CONSUMER -----------------------------> Broker
+         <-----------------------------
+         Return data immediately if possible
+         OR
+         Return "empty" after timeout
+
+Some of the properties are
+
+    - fetch.min.bytes :: default 1 ::
+        Controls how much data you want to pull at least in each request.
+        Helps improving throughput and decreasing request number
+        Costs a little bit of latency
+
+    - max.poll.records :: default 500 ::
+        Controls how many records to receive per poll request
+        Increase if the messages are very small and lot of RAM is available and you want to consume lot of messages at the same time.
+        Good monitor how many records are fetched per poll requests. If necessary increase it to get better throughput
+
+    - max.partition.fetch.bytes :: default 1 MB ::
+        Max data returned by the broker per partition
+        If you read from lot of partitions like 100 partitions, you will need lots of Memory
+
+    - fetch.max.bytes :: default 50 MB ::
+        Maximum data returned for each fetch request (covers multiple partitions)
+        Consumer performs multiple fetches in parallel
+
+    - max.poll.interval.ms :: default 300000 - 5 mins ::
+        Maximum amount of time between 2 calls of .poll() before declaring a consumer dead
+        If processing of data takes time its a good idea to design processing faster.
+
+
+
+These are default settings and need not be changed.
+
+Consumer Offset commit Strategies
+---------------------------------
+
+2 strategies for committing the offsets
+
+    1) enable.auto.commit = true (default) and synchronous processing of batches.
+  This property means there is no new poll on the broker until the current set of records are processed.
+    2) enable.auto.commit = false means manually committing the offset when processing finishes.
+
+When enable.auto.commit= true , auto.commit.interval.ms = 5000 by default will be set,
+which is 5 secs by default, every time u call .poll()
+
+Its a good idea to have enable.auto.commit = false and do a synchronous processing of batches
+
+Manual commit of Offset
+-----------------------
+When an unexpected exception happens, then log the exception and continue processing so other messages are consumed and processed.
+Consumption Process itself is not put on hold.
+
+Think about a better way of handling these exceptions for practical purposes.
+
+
+Performance improvements using batching
+---------------------------------------
+consumeMessageButBulkUpdateElasticSearch() Method is the example of batch updates to Elastic Search.
+Since updates happe in batch outside of for loop not able to get the details of offset and partition in the error logging.
+Poll duration is mainly determined by the source code - ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofMillis(20000));
+
+
+Consumer Offsets reset Behavior
+-------------------------------
+
+If connsumer is down for more than the topic's retention policy then offsets are missed/lost
+Ex - if a topic's retention policy is 7 days , consumer is down beyond 7 days meaning there is no update on the offset from the consumer
+for more than 7 days then, for that consumer offset becomes invalid and the data is lost.
+
+different values for offset reset values are -
+auto.offset.reset = latest :: Will read data from the end of the log
+auto.offset.reset = earliest :: will read data from the start of the log
+auto.offset.reset = none :: Will throw exception if no offset is found
+
+This behavior can be controlled by the broker settings :: offset.retention.minutes
+
+
+Replaying data
+--------------
+reset the offset on a specific partition ::
+    - kafka-consumer-groups --bootstrap-server localhost:9092 --group tweets-consumer-group --topic twitter-tweets:2 --reset-offsets --to-offset 15 --execute
+
+reset the offset to the start of the log ::
+    - kafka-consumer-groups --bootstrap-server localhost:9092 --group tweets-consumer-group --topic twitter-tweets:2 --reset-offsets --to-earliest --execute
+
+Consumer internal threads - Controlling Consumer liveliness
+-----------------------------------------------------------
+
+Each consumer polls broker , its called poll thread.
+Each Consumer also talks to another Acting Broker called Consumer Coordinator and send heart beats
+
+When any consumer stops sending heart beat, kafka thinks consumer is down and plans for rebalance.
+
+In order for both these functionalities (poll thread and heart beat) to work correctly, it is recommended to
+    - process faster and poll often
+   otherwise there will be lots of rebalances
+
+For heart beat thread, which happens automatically without our involvement, there is a setting :: session.timeout.ms (default is 10 secs)
+If a consumer does not send heart beat in that duration then kafka marks that consumer as dead and rebalances
+
+There is another setting heartbeat.innterval.ms (default 3 secs), this settings specifies the frequency of heart beat consumers send.
+General guideline for this setting is 1/3 of session.timeout.ms
+
+
+
+
+
 
 
 

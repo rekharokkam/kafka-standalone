@@ -3,6 +3,8 @@ buildscript {
         springboot_version = '2.4.5'
         lombok_version = '1.18.16'
         avro_plugin_version = '1.1.0'
+        twitter_dependency_version = '2.2.0'
+        elasticsearch_dependency_version = '6.8.13'
     }
 
     repositories {
@@ -44,11 +46,18 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web:${springboot_version}"
 //    implementation 'org.apache.kafka:kafka-streams' 
     implementation 'org.springframework.kafka:spring-kafka'
-    implementation 'com.twitter:hbc-core:2.2.0' //twitter dependency
+    implementation "com.twitter:hbc-core:${twitter_dependency_version}" //twitter dependency
+    implementation "org.elasticsearch.client:elasticsearch-rest-high-level-client:${elasticsearch_dependency_version}" //elastic search dependency
+    implementation "org.elasticsearch:elasticsearch:${elasticsearch_dependency_version}"
+    implementation 'com.google.code.gson:gson:2.8.7'
+
     compileOnly "org.projectlombok:lombok:${lombok_version}"
+
     runtimeOnly 'com.h2database:h2'
+
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor "org.projectlombok:lombok:${lombok_version}"
+
     testImplementation "org.springframework.boot:spring-boot-starter-test:${springboot_version}"
     testImplementation 'org.springframework.kafka:spring-kafka-test'
 }
