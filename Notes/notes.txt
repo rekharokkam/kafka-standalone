@@ -146,6 +146,9 @@ Above command will reset the offset only by few indexes so the consumer group ca
 Resetting offset based on a particular offset
     - kafka-consumer-groups --bootstrap-server kafka-tte-app.prod.target.com:9093 --group ccorders-v3-prod --command-config client-prod-ssl.properties --topic fit-sparta-retail-transactions:0 --reset-offsets  --to-offset 319814955  --execute
 
+Resetting offset for a specific Partition
+    - kafka-consumer-groups --bootstrap-server localhost:9092 --group tweets-consumer-group --topic twitter-tweets:2 --reset-offsets --to-offset 15 --execute
+
 Decode and encoded file :: base64 -d -i <input file name> -o <output file name> OR base64 -d copy_and_paste_the_string
 
 
@@ -609,6 +612,13 @@ When enable.auto.commit= true , auto.commit.interval.ms = 5000 by default will b
 which is 5 secs by default, every time u call .poll()
 
 Its a good idea to have enable.auto.commit = false and do a synchronous processing of batches
+
+Manual commit of Offset
+-----------------------
+When an unexpected exception happens, then log the exception and continue processing so other messages are consumed and processed.
+Consumption Process itself is not put on hold.
+
+Think about a better way of handling these exceptions for practical purposes.
 
 
 

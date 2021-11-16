@@ -27,7 +27,8 @@ public class KafkaTweetsConsumerElasticSearchPublisher {
     private static final String BOOTSTRAP_SERVER = "localhost:9092";
     private static final String GROUP_ID = "tweets-consumer-group";
     private static final String OFFRESET_RESET_CONFIG = "earliest";
-    private static final String ENABLE_AUTO_COMMIT = "true";
+    private static final String ENABLE_AUTO_COMMIT = "false"; //disable auto commit of the offsets so we can set it manually
+    private static final String MAX_RECORDS_TO_FETCH = "10";
 
     private Properties kafkaConsumerProperties = new Properties();
     private RestHighLevelClient restHighLevelClient;
@@ -47,6 +48,7 @@ public class KafkaTweetsConsumerElasticSearchPublisher {
         kafkaConsumerProperties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, GROUP_ID);
         kafkaConsumerProperties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, OFFRESET_RESET_CONFIG);
         kafkaConsumerProperties.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, ENABLE_AUTO_COMMIT);
+        kafkaConsumerProperties.setProperty (ConsumerConfig.MAX_POLL_RECORDS_CONFIG, MAX_RECORDS_TO_FETCH);
 
         kafkaConsumer = new KafkaConsumer<String, String>(kafkaConsumerProperties);
         kafkaConsumer.subscribe(Arrays.asList(TOPIC_NAME)); // can subscribe to more than one topic
@@ -80,11 +82,29 @@ public class KafkaTweetsConsumerElasticSearchPublisher {
                     log.info ("newly inserted Elastic Search document : {}", indexId);
 
                     //sleep for a sec to watch the operation slowly
-                    Thread.sleep(1000);
+                    Thread.sleep(10);
 
                 } catch (IOException | InterruptedException anyException) {
                     log.error("An exception occurred while sending the document to elastic search", anyException);
+                } catch (Exception exception) {
+                    log.info("Unexpected exception occurred. Here are the details : " +
+                            "\n Key : {}" +
+                            "\n Partition : {}" +
+                            "\n Offset : {}", consumerRecord.key(), consumerRecord.partition(), consumerRecord.offset());
+                    log.error("Exception details for documentinng ", exception);
+                    continue;
+
+                    //This is where DLQ, Slack notification, Blocking queue (for retrying) and other things come into play
                 }
+            }
+
+            log.info ("Committing the Offset ");
+            kafkaConsumer.commitSync();
+            log.info("Offset Committed Successfully");
+            try {
+                Thread.sleep(1000); //just to create a Pause for testing
+            } catch (InterruptedException interruptedException) {
+                log.error("Thread sleep was interrupted ", interruptedException);
             }
         }
     }
