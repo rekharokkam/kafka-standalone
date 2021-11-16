@@ -621,6 +621,11 @@ Consumption Process itself is not put on hold.
 Think about a better way of handling these exceptions for practical purposes.
 
 
+Performance improvements using batching
+---------------------------------------
+consumeMessageButBulkUpdateElasticSearch() Method is the example of batch updates to Elastic Search.
+Since updates happe in batch outside of for loop not able to get the details of offset and partition in the error logging.
+Poll duration is mainly determined by the source code - ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofMillis(20000));
 
 
 
