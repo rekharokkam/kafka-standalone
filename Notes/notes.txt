@@ -594,8 +594,11 @@ Some of the properties are
         Maximum data returned for each fetch request (covers multiple partitions)
         Consumer performs multiple fetches in parallel
 
-    - max.poll.interval.ms :: default 300000 ::
-        whats the frequency of polling the topic
+    - max.poll.interval.ms :: default 300000 - 5 mins ::
+        Maximum amount of time between 2 calls of .poll() before declaring a consumer dead
+        If processing of data takes time its a good idea to design processing faster.
+
+
 
 These are default settings and need not be changed.
 
@@ -651,6 +654,23 @@ reset the offset on a specific partition ::
 reset the offset to the start of the log ::
     - kafka-consumer-groups --bootstrap-server localhost:9092 --group tweets-consumer-group --topic twitter-tweets:2 --reset-offsets --to-earliest --execute
 
+Consumer internal threads - Controlling Consumer liveliness
+-----------------------------------------------------------
+
+Each consumer polls broker , its called poll thread.
+Each Consumer also talks to another Acting Broker called Consumer Coordinator and send heart beats
+
+When any consumer stops sending heart beat, kafka thinks consumer is down and plans for rebalance.
+
+In order for both these functionalities (poll thread and heart beat) to work correctly, it is recommended to
+    - process faster and poll often
+   otherwise there will be lots of rebalances
+
+For heart beat thread, which happens automatically without our involvement, there is a setting :: session.timeout.ms (default is 10 secs)
+If a consumer does not send heart beat in that duration then kafka marks that consumer as dead and rebalances
+
+There is another setting heartbeat.innterval.ms (default 3 secs), this settings specifies the frequency of heart beat consumers send.
+General guideline for this setting is 1/3 of session.timeout.ms
 
 
 
