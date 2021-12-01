@@ -240,6 +240,25 @@ As far as possible - use latest client irrespective of broker versions
 Chapter - Kafka Twitter Producer and Advanced Configurations
 -------------------------------------------------------------
 
+Twitter setup
+-------------
+userName - rekha_bg@yahoo.com
+API Key - Your key is like your username. It is used to verify who you are to Twitter.
+	- F7JikmUt6SkQHYiZXFbgVpTZ4
+API Secret Key - Your secret key is used like a password. It identifies your account. Keep this safe!
+	- 4yKV8qO1ttlYX3E31BWTYqJpXYDoLQv3FBI7lpvYOTqp97cRUG
+Bearer Token - An Access Token used in authentication that allows you to pull specific data.
+	- AAAAAAAAAAAAAAAAAAAAAMJlRAEAAAAA%2BglBMiKdMeG%2BJTHNdZxAtZ5faVQ%3DEzKy1qfcmHA2OapS0CWFkromTEme3XtyP5unFdqBZ4oHueIsly
+Access Token
+        - 2746149770-u6SdzYuuehtoIVKNUQYg6mMLQ5ybmnXHuOnOQst
+Access Token Secret
+        - 6BQP5FYgYAchSITWuTYcvBKYjDc1Pa4apXHnOwgYODZNc
+
+
+An access token and access token secret are user-specific credentials used to authenticate OAuth 1.0a API requests. They specify the Twitter account the request is made on behalf of.
+
+
+
 kafka-topics --bootstrap-server localhost:9092 --topic twitter-tweets --create --partitions 3 --replication-factor 1
 
 After starting TwitterProducer class , run the console consumer with the command -
@@ -634,7 +653,7 @@ Poll duration is mainly determined by the source code - ConsumerRecords<String, 
 Consumer Offsets reset Behavior
 -------------------------------
 
-If connsumer is down for more than the topic's retention policy then offsets are missed/lost
+If consumer is down for more than the topic's retention policy then offsets are missed/lost
 Ex - if a topic's retention policy is 7 days , consumer is down beyond 7 days meaning there is no update on the offset from the consumer
 for more than 7 days then, for that consumer offset becomes invalid and the data is lost.
 
