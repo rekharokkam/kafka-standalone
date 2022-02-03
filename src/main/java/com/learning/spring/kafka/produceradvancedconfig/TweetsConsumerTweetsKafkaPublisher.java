@@ -9,6 +9,7 @@ import com.twitter.hbc.core.endpoint.StatusesFilterEndpoint;
 import com.twitter.hbc.core.processor.StringDelimitedProcessor;
 import com.twitter.hbc.httpclient.auth.Authentication;
 import com.twitter.hbc.httpclient.auth.OAuth1;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class TweetsConsumerTweetsKafkaPublisher {
 
     private static final String CONSUMER_KEY = "F7JikmUt6SkQHYiZXFbgVpTZ4";
@@ -32,8 +34,6 @@ public class TweetsConsumerTweetsKafkaPublisher {
     private static final String TWITTER_TWEETS_TOPIC_NAME = "twitter-tweets";
     private static final String KAFKA_TOPIC_KEY = "TWEETS_KEY";
     private static final String BOOTSTRAP_SERVER = "localhost:9092";
-
-    private Logger logger = LoggerFactory.getLogger(TweetsConsumerTweetsKafkaPublisher.class.getName());
 
     public Client createTwitterClient (BlockingQueue<String> msgQueue) {
 
@@ -75,15 +75,15 @@ public class TweetsConsumerTweetsKafkaPublisher {
 
         //Adding shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread (() -> {
-            logger.info("Stopping Twitter read and Kafka populate Application");
+            log.info("Stopping Twitter read and Kafka populate Application");
 
-            logger.info("Shutting down twitter client");
+            log.info("Shutting down twitter client");
             twitterClient.stop();
 
-            logger.info("Closing Kafka Producer");
+            log.info("Closing Kafka Producer");
             twitterTweetsKafkaProducer.close();
 
-            logger.info("We are done");
+            log.info("We are done");
 
         }));
 
@@ -98,13 +98,13 @@ public class TweetsConsumerTweetsKafkaPublisher {
             }
 
             if (null != msg) {
-                logger.info(msg);
+                log.info(msg);
                 twitterTweetsKafkaProducer.send(new ProducerRecord<>(TWITTER_TWEETS_TOPIC_NAME, KAFKA_TOPIC_KEY, msg), new Callback() {
                     @Override
                     public void onCompletion(RecordMetadata metadata, Exception exception) {
 
                         if (exception != null){
-                            logger.error("Something went wrong while producing the message");
+                            log.error("Something went wrong while producing the message");
                             exception.printStackTrace();
                         }
                     }
@@ -112,7 +112,7 @@ public class TweetsConsumerTweetsKafkaPublisher {
             }
         }
 
-        logger.info("End of twitter client application");
+        log.info("End of twitter client application");
     }
 
     public KafkaProducer<String, String> createKafkaProducer () {

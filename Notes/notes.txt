@@ -278,13 +278,13 @@ acks = 0 - No response is requested from the broker. If broker goes offline or a
 This setting is useful when its okay to loose the data. Producer will not know if the message made it to the broker or not.
 acks = 0 is good for performance, Good use cases are - metrics, Log collection, etc
 
-acks = 1 - Default settings as of Kafka 2.0 is acks = 1. This meands leader response is requested but replication is not guaranteed. Usually happens
-in the backgroud.
+acks = 1 - Default settings as of Kafka 2.0 is acks = 1. This means leader response is requested but replication is not guaranteed meaning in-sync replicas confirmation of message receival is not processed.
+Usually happens in the backgroud.
 If ack is not received then producer may re-try.
 Producer knows the broker has the data.
 If leader goes down before replication happens the data will be lost.
 
-acks = all - Leader and replicas both are requested to acknowledge. Broker after receives the acknowledgement from the leader and all replicas
+acks = all - Leader and replicas both are requested to acknowledge. Broker after receiving the acknowledgement from the leader and all replicas
 sends the ack back to producer. This setting is the safest and adds latency (not much). This is a necessary setting for safe Producer.
 If there are enough replica sets with this setting there is no data loss.
 With acks = all , there is another setting - min.insync.replicas
@@ -294,14 +294,26 @@ min.insync.replicas = 2 implies there are atleast 2 brokers that are ISR (includ
 min.insync.replicas = 2 is the common setting
 
 If replication factor = 3, min.insync.replicas = 2 and acks = all
-    - can only tolerate one broker going down other wise producer will receive an exception on send (NOT_ENOUGH_REPLICAS)
+    - producer can only tolerate one broker going down other wise producer will receive an exception on send (NOT_ENOUGH_REPLICAS)
 
 For maximum safety, maximum availability - replication factory = 3, min.insync.replicas 2, and acks = all
 
-Producer retries
-----------------
+Retries and Max.in.flight.requests.per.connection
+--------------------------------------------------
+
+There are multiple properties related to retry logic,
+
+developers are expected to handle transient failure like NotEnoughReplicasException, if not handled and data not re-sent,
+data will be lost.
+
+For kafka >= 2.1 default retry count is a large number - 2147483647, this means producer re-tries 2147483647 times
+Other default settings related to retries are -
+delivery.timeout.ms = 120000 ms = 2 mins. Records will fail if they cannot be acknowledged within delivery.timeout.ms
+max.in.flight.requests.per.connection - how many producer requests can be made in parallel
+When re-try comes into play, messagescan get out of order.
 
 No need to worry about this as my version of kafka is greater than 2.1
+
 
 Idempotent Producers
 --------------------
