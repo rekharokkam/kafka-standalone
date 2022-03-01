@@ -406,6 +406,14 @@ High throughput producer
 ------------------------
 
 
+
+
+
+
+
+
+
+
 Chapter - Kafka Elasticsearch Consumer and Advanced Configurations
 ------------------------------------------------------------------
 
