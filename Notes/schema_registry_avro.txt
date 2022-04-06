@@ -253,7 +253,7 @@ I created the topic as :: kafka-topics --bootstrap-server localhost:9092 --topic
 
 I ran confluent tools image :: docker run -it --rm --net=host confluentinc/cp-schema-registry bash
 
-    kafka-avro-console-producer
+kafka-avro-console-producer
 ---------------------------
 
 I ran confluent tools image :: docker run -it --rm --net=host confluentinc/cp-schema-registry bash
