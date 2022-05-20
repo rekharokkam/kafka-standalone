@@ -151,6 +151,9 @@ Resetting offset for a specific Partition
 
 Decode and encoded file :: base64 -d -i <input file name> -o <output file name> OR base64 -d copy_and_paste_the_string
 
+Another way to run the cli is to run inside the docker container
+    docker run --net=host --name=kafka-consumer -v ~/Documents/Rekha/workspace/kafka_keys/:/kafka_keys -it --rm confluentinc/cp-kafka:7.1.0 /bin/bash
+    Run any kafka cli command of you choice
 
 Chapter - Kafka Java Programming 101
 ------------------------------------
@@ -240,6 +243,25 @@ As far as possible - use latest client irrespective of broker versions
 Chapter - Kafka Twitter Producer and Advanced Configurations
 -------------------------------------------------------------
 
+Twitter setup
+-------------
+userName - rekha_bg@yahoo.com
+API Key - Your key is like your username. It is used to verify who you are to Twitter.
+	- F7JikmUt6SkQHYiZXFbgVpTZ4
+API Secret Key - Your secret key is used like a password. It identifies your account. Keep this safe!
+	- 4yKV8qO1ttlYX3E31BWTYqJpXYDoLQv3FBI7lpvYOTqp97cRUG
+Bearer Token - An Access Token used in authentication that allows you to pull specific data.
+	- AAAAAAAAAAAAAAAAAAAAAMJlRAEAAAAA%2BglBMiKdMeG%2BJTHNdZxAtZ5faVQ%3DEzKy1qfcmHA2OapS0CWFkromTEme3XtyP5unFdqBZ4oHueIsly
+Access Token
+        - 2746149770-u6SdzYuuehtoIVKNUQYg6mMLQ5ybmnXHuOnOQst
+Access Token Secret
+        - 6BQP5FYgYAchSITWuTYcvBKYjDc1Pa4apXHnOwgYODZNc
+
+
+An access token and access token secret are user-specific credentials used to authenticate OAuth 1.0a API requests. They specify the Twitter account the request is made on behalf of.
+
+
+
 kafka-topics --bootstrap-server localhost:9092 --topic twitter-tweets --create --partitions 3 --replication-factor 1
 
 After starting TwitterProducer class , run the console consumer with the command -
@@ -259,13 +281,13 @@ acks = 0 - No response is requested from the broker. If broker goes offline or a
 This setting is useful when its okay to loose the data. Producer will not know if the message made it to the broker or not.
 acks = 0 is good for performance, Good use cases are - metrics, Log collection, etc
 
-acks = 1 - Default settings as of Kafka 2.0 is acks = 1. This meands leader response is requested but replication is not guaranteed. Usually happens
-in the backgroud.
+acks = 1 - Default settings as of Kafka 2.0 is acks = 1. This means leader response is requested but replication is not guaranteed meaning in-sync replicas confirmation of message receival is not processed.
+Usually happens in the backgroud.
 If ack is not received then producer may re-try.
 Producer knows the broker has the data.
 If leader goes down before replication happens the data will be lost.
 
-acks = all - Leader and replicas both are requested to acknowledge. Broker after receives the acknowledgement from the leader and all replicas
+acks = all - Leader and replicas both are requested to acknowledge. Broker after receiving the acknowledgement from the leader and all replicas
 sends the ack back to producer. This setting is the safest and adds latency (not much). This is a necessary setting for safe Producer.
 If there are enough replica sets with this setting there is no data loss.
 With acks = all , there is another setting - min.insync.replicas
@@ -275,14 +297,26 @@ min.insync.replicas = 2 implies there are atleast 2 brokers that are ISR (includ
 min.insync.replicas = 2 is the common setting
 
 If replication factor = 3, min.insync.replicas = 2 and acks = all
-    - can only tolerate one broker going down other wise producer will receive an exception on send (NOT_ENOUGH_REPLICAS)
+    - producer can only tolerate one broker going down other wise producer will receive an exception on send (NOT_ENOUGH_REPLICAS)
 
 For maximum safety, maximum availability - replication factory = 3, min.insync.replicas 2, and acks = all
 
-Producer retries
-----------------
+Retries and Max.in.flight.requests.per.connection
+--------------------------------------------------
+
+There are multiple properties related to retry logic,
+
+developers are expected to handle transient failure like NotEnoughReplicasException, if not handled and data not re-sent,
+data will be lost.
+
+For kafka >= 2.1 default retry count is a large number - 2147483647, this means producer re-tries 2147483647 times
+Other default settings related to retries are -
+delivery.timeout.ms = 120000 ms = 2 mins. Records will fail if they cannot be acknowledged within delivery.timeout.ms
+max.in.flight.requests.per.connection - how many producer requests can be made in parallel
+When re-try comes into play, messagescan get out of order.
 
 No need to worry about this as my version of kafka is greater than 2.1
+
 
 Idempotent Producers
 --------------------
@@ -359,7 +393,7 @@ Smart batching allows kafka to have high throughput while maintaining low latenc
 Batches have higher compression ratio so better efficiency. Each batch is considered one request.
 
 There are 2 settings for batching
-- linger.ms and batch,size
+- linger.ms and batch.size
 
 linger.ms - Number of millisecs a producer is willing to wait before sending out a batch (default 0)
 By introducing a small delay linger.ms = 5, we increase the chances of messages being sent as batch, this batching helps with
@@ -373,6 +407,14 @@ batch is allocated per partition
 
 High throughput producer
 ------------------------
+
+
+
+
+
+
+
+
 
 
 Chapter - Kafka Elasticsearch Consumer and Advanced Configurations
@@ -634,7 +676,7 @@ Poll duration is mainly determined by the source code - ConsumerRecords<String, 
 Consumer Offsets reset Behavior
 -------------------------------
 
-If connsumer is down for more than the topic's retention policy then offsets are missed/lost
+If consumer is down for more than the topic's retention policy then offsets are missed/lost
 Ex - if a topic's retention policy is 7 days , consumer is down beyond 7 days meaning there is no update on the offset from the consumer
 for more than 7 days then, for that consumer offset becomes invalid and the data is lost.
 
