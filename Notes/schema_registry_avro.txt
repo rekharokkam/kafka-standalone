@@ -200,6 +200,7 @@ Do not do non-breaking changes
     4) Do not rename fields. You can add aliases instead
     5) when evolving a schema , always provide defaults
     6) when evolving a schema, never delete a required field
+    6) when evolving a schema, never delete a required field
 
 Schema Evolution - Hands On
 ---------------------------

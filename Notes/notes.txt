@@ -313,7 +313,7 @@ For kafka >= 2.1 default retry count is a large number - 2147483647, this means 
 Other default settings related to retries are -
 delivery.timeout.ms = 120000 ms = 2 mins. Records will fail if they cannot be acknowledged within delivery.timeout.ms
 max.in.flight.requests.per.connection - how many producer requests can be made in parallel
-When re-try comes into play, messagescan get out of order.
+When re-try comes into play, messages can get out of order.
 
 No need to worry about this as my version of kafka is greater than 2.1
 
@@ -365,7 +365,7 @@ Producer Compression
 --------------------
 
 Compression is enabled at the Producer level, it does not require any configuration changes either in broker or in consumer.
-"compression.type" can be 'none' (default), 'gzip', 'Iz4' and 'snappy'
+"compression.type" can be 'none' (default), 'gzip', 'Iz4', 'snappy' and 'Zstd'
 Compression is more effective when the batch of kafka messages is bigger, more u send to Kafka , compression is more helpful.
 
 Advantages of compression
@@ -380,6 +380,16 @@ Disadvantage
 - Consumers also should use CPU cycles to uncompress the data
 
 gzip has highest compression ratio but its not fast
+
+From an article - https://portavita.github.io/2021-01-25-Why_Kafka_compression_might_save_you_thousands_of_dollars/#:~:text=Consumer%20reads%20data%20and%20decompresses,used%20to%20compress%20and%20decompress.
+Kafka compression is about (ehm..) compressing data instead of sending data as they are.
+Some data responds better to compression than other and some algorithm performs better than others.
+Possible compression options in the producer are: none, gzip, snappy, lz4 and zstd.
+Compression can be handled by the producer. That is: producer compresses data before sending to Kafka.
+Consumer reads data and decompresses it. Kafka will store data in a compressed form.
+That saves: bandwidth, disk space, RAM at the price of some CPU used to compress and decompress.
+The outcome of our research might be different from your case.
+
 
 Producer batching - this is useful in performance improvement
 -------------------------------------------------------------
@@ -728,6 +738,11 @@ Command to try - For grabbing one message from topic
 ----------------------------------------------------
 
 ./bin/kafka-console-consumer.sh --bootstrap-server kafka-tte-gom.prod.target.com:9093 --consumer.config ~/kafka-ssl.prod.properties --topic gom-email --partition 2 --offset 463284684 --max-messages 1
+
+
+
+
+
 
 
 
