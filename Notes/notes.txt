@@ -111,7 +111,7 @@ Command to start the consumers in a group -
 Command to start the consumers in a new group to read from start of the topic from beginning
 	kafka-console-consumer --bootstrap-server localhost:9092 --topic first-topic --group second-consumer-group --from-beginning
 Command to start a consumer in a group with certs
-    kafka-console-consumer --bootstrap-server kafka-tte-app.dev.target.com:9093 --topic cc-serverdb-tap2aws --consumer.config client-ssl.properties --group ccordersv3-local-group --from-beginning
+    kafka-console-consumer --bootstrap-server <broker-name>:9093 --topic cc-serverdb-tap2aws --consumer.config client-ssl.properties --group ccordersv3-local-group --from-beginning
 
 
 Kafka remembers the offset(index) on every topic that consumer(s) of a group consumed. If u start a consumer of an existing group on existing topic with --from-beginning command it only reads those messages that are not already consumed by an active or a non-active consumer of the same group.
@@ -144,7 +144,7 @@ Above command resets the offset of first-consumer-group to earliest (0 in this c
 Above command will reset the offset only by few indexes so the consumer group can read only those and not all from beginning
 
 Resetting offset based on a particular offset
-    - kafka-consumer-groups --bootstrap-server kafka-tte-app.prod.target.com:9093 --group ccorders-v3-prod --command-config client-prod-ssl.properties --topic fit-sparta-retail-transactions:0 --reset-offsets  --to-offset 319814955  --execute
+    - kafka-consumer-groups --bootstrap-server <broker-name>:9093 --group ccorders-v3-prod --command-config client-prod-ssl.properties --topic fit-sparta-retail-transactions:0 --reset-offsets  --to-offset 319814955  --execute
 
 Resetting offset for a specific Partition
     - kafka-consumer-groups --bootstrap-server localhost:9092 --group tweets-consumer-group --topic twitter-tweets:2 --reset-offsets --to-offset 15 --execute
@@ -422,7 +422,7 @@ Chapter - Kafka Elasticsearch Consumer and Advanced Configurations
 
 Setting up Elasticsearch in the cloud
 -------------------------------------
-I setup elasticsearch in the cloud through bonsai.io. user_name is rekha_bg@yahoo.com and password is yokeyyokey
+I setup elasticsearch in the cloud through bonsai.io. user_name is rekha_bg@yahoo.com and password is
 cluster name - KAFKA_STANDALONE_cluster.
 URL to access the cluster - https://app.bonsai.io/clusters/kafka-standalone-cou-1278981902/
 
@@ -727,7 +727,7 @@ General guideline for this setting is 1/3 of session.timeout.ms
 Command to try - For grabbing one message from topic
 ----------------------------------------------------
 
-./bin/kafka-console-consumer.sh --bootstrap-server kafka-tte-gom.prod.target.com:9093 --consumer.config ~/kafka-ssl.prod.properties --topic gom-email --partition 2 --offset 463284684 --max-messages 1
+./bin/kafka-console-consumer.sh --bootstrap-server <broker>:9093 --consumer.config ~/kafka-ssl.prod.properties --topic gom-email --partition 2 --offset 463284684 --max-messages 1
 
 
 
