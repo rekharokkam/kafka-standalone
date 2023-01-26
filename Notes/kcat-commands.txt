@@ -1,0 +1,50 @@
+Kcat Command to read a message from a topic
+-------------------------------------------
+
+kcat -C -b kafka-ttc-app.dev.target.com:9093 -t cc-core-orders-inbound-v3 -s value=avro \
+-X security.protocol=ssl \
+-X ssl.certificate.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-dev.target.com.pem \
+-X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-dev.target.com.pem \
+-X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
+-X ssl.key.password='' -p 4 -o 119 -c 1 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' -r https://schemaregistry.dev.target.com
+
+kcat -C -b kafka-ttc-app.dev.target.com:9093 -t cc-orders -s value=avro \
+-X security.protocol=ssl \
+-X ssl.certificate.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-dev.target.com.pem \
+-X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-dev.target.com.pem \
+-X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
+-X ssl.key.password='' -p 4 -o 119 -c 1 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' -r https://schemaregistry.dev.target.com
+
+
+prod
+----
+
+Search by offset
+----------------
+
+kcat -C -e -b kafka-ttc-app.prod.target.com:9093 -t cc-core-orders-inbound-v3 -s value=avro \
+-X security.protocol=ssl \
+-X ssl.certificate.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-prod.target.com.pem \
+-X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-prod.target.com.pem \
+-X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
+-X ssl.key.password='' -p 4 -o 119 -c 1 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' -r https://schemaregistry.prod.target.com
+
+kcat -C -e -b kafka-ttc-app.prod.target.com:9093 -t cc-orders -s value=avro \
+-X security.protocol=ssl \
+-X ssl.certificate.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/bimigrationbatch-prd.target.com.pem \
+-X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/bimigrationbatch-prd.target.com.pem \
+-X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
+-X ssl.key.password='' -p 0 -o 199879 -c 1 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' -r https://schemaregistry.prod.target.com
+
+Search by time range
+--------------------
+
+kcat -C -e -b kafka-ttc-app.prod.target.com:9093 -t cc-core-orders-inbound-v3 -s value=avro \
+-X security.protocol=ssl \
+-X ssl.certificate.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-prod.target.com.pem \
+-X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-prod.target.com.pem \
+-X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
+-X ssl.key.password='' -p 4 -o s@1661194800000 -o e@1661281200000 -c 20 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' -r https://schemaregistry.prod.target.com
+
+s@1661194800000 and e@1661281200000 :: represent time in ms, I used the site https://www.epochconverter.com/ to generate the ms.
+use LocalTime in the dropdown
