@@ -1,3 +1,18 @@
+installing kcat
+---------------
+brew install kcat
+
+fix the issue - ERROR: Failed to query metadata for topic <topic-name>>: Local: Broker transport failure.
+Check the version of the library - librdkafka
+revert to the version 1.9.2 from whatever version you are on
+
+cd "$(brew --prefix)"/Library/Taps/homebrew/homebrew-core
+git checkout f7d0f40bbc4075177ecf16812fd95951a723a996 -- Formula/librdkafka.rb
+cd -
+brew unlink librdkafka #If you've already installed librdkafka
+brew install librdkafka
+
+
 Kcat Command to read a message from a topic
 -------------------------------------------
 
