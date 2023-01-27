@@ -13,7 +13,6 @@ brew unlink librdkafka #If you've already installed librdkafka
 brew install librdkafka
 
 
-
 Kcat Command to read a message from a topic
 -------------------------------------------
 

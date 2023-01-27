@@ -164,7 +164,8 @@ in future phone_number might be added, then it becomes ver 2.0
 version 1.0 :: first_name, last_name
 version 2.0 :: first_name, last_name, phone_number
 
-There are 4 types of Schema evolution
+There are 4 types of Schema evolution - Compatibility
+A good read for better understanding - https://docs.confluent.io/platform/current/schema-registry/avro.html#backward-compatibility
 1) Backward : backward compatible change is when a new schema can be used to read old data
 Ex - v2 Schema can be used to read v1 data
 
