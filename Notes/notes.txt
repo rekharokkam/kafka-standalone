@@ -152,7 +152,7 @@ Resetting offset for a specific Partition
 Decode and encoded file :: base64 -d -i <input file name> -o <output file name> OR base64 -d copy_and_paste_the_string
 
 Another way to run the cli is to run inside the docker container
-    docker run --net=host --name=kafka-consumer -v ~/Documents/Rekha/workspace/kafka_keys/:/kafka_keys -it --rm confluentinc/cp-kafka:7.1.0 /bin/bash
+    docker run --net=host --name=kafka-consumer -v ~/Documents/Rekha/workspace/kafka_keys/:/kafka_keys -it --rm confluentinc/cp-kafka:7.3.0 /bin/bash
     Run any kafka cli command of you choice
 
 Chapter - Kafka Java Programming 101

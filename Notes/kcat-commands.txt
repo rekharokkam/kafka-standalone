@@ -18,7 +18,7 @@ Kcat Command to read a message from a topic
 
 kcat -C -b kafka-ttc-app.dev.target.com:9093 -t cc-core-orders-inbound-v3 -s value=avro \
 -X security.protocol=ssl \
--X ssl.certificate.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-dev.target.com.pem \
+-X ssl.certificate`.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-dev.target.com.pem \
 -X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-dev.target.com.pem \
 -X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
 -X ssl.key.password='' -p 4 -o 119 -c 1 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' -r https://schemaregistry.dev.target.com
