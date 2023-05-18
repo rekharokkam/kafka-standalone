@@ -745,6 +745,9 @@ Found a docker-compose file for spinning kafka locally - docker-compose.yml
 
 
 
+KOWL - dashboard for kafka topics
+docker run -p 8080:8080 -e KAFKA_BROKERS=kafka-ttc-app.dev.target.com:9092 quay.io/cloudhut/kowl:master
+Then open up your browser to http://localhost:8080/
 
 
 
