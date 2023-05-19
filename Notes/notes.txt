@@ -145,7 +145,7 @@ Above command will reset the offset only by few indexes so the consumer group ca
 
 Resetting offset based on a particular offset
     - kafka-consumer-groups --bootstrap-server <broker-name>:9093 --group ccorders-v3-prod --command-config client-prod-ssl.properties --topic fit-sparta-retail-transactions:0 --reset-offsets  --to-offset 319814955  --execute
-
+      kafka-consumer-groups.sh --bootstrap-server kafka-ttc-app.dev.target.com:9092 --topic item-changes:0 --group ted-test-group-id --reset-offsets --to-offset 14789764 --execute
 Resetting offset for a specific Partition
     - kafka-consumer-groups --bootstrap-server localhost:9092 --group tweets-consumer-group --topic twitter-tweets:2 --reset-offsets --to-offset 15 --execute
 
@@ -748,6 +748,15 @@ Found a docker-compose file for spinning kafka locally - docker-compose.yml
 KOWL - dashboard for kafka topics
 docker run -p 8080:8080 -e KAFKA_BROKERS=kafka-ttc-app.dev.target.com:9092 quay.io/cloudhut/kowl:master
 Then open up your browser to http://localhost:8080/
+
+
+
+
+Use any kafka command with this image but only works on the port 9092 as it cannot read the properties file
+    docker run wurstmeister/kafka:2.13-2.8.1 kafka-consumer-groups.sh --bootstrap-server kafka-ttc-app.dev.target.com:9092 --group core_ordersv3_dev_group  --describe
+
+OR to reset the offset or to run the acls (I don’t know this yet)
+    docker run wurstmeister/kafka:2.13-2.8.1 kafka-acls.sh --bootstrap-server kafka-ttc-app.dev.target.com:9092 --topic sam-violation-input --list
 
 
 
