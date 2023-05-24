@@ -18,6 +18,7 @@ Kcat Command to read a message from a topic
 
 kcat -C -b kafka-ttc-app.dev.target.com:9093 -t cc-core-orders-inbound-v3 -s value=avro \
 -X security.protocol=ssl \
+-X ssl.endpoint.identification.algorithm=none \
 -X ssl.certificate`.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-dev.target.com.pem \
 -X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-dev.target.com.pem \
 -X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
@@ -25,6 +26,7 @@ kcat -C -b kafka-ttc-app.dev.target.com:9093 -t cc-core-orders-inbound-v3 -s val
 
 kcat -C -b kafka-ttc-app.dev.target.com:9093 -t cc-orders -s value=avro \
 -X security.protocol=ssl \
+-X ssl.endpoint.identification.algorithm=none \
 -X ssl.certificate.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-dev.target.com.pem \
 -X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-dev.target.com.pem \
 -X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
@@ -39,6 +41,7 @@ Search by offset
 
 kcat -C -e -b kafka-ttc-app.prod.target.com:9093 -t cc-core-orders-inbound-v3 -s value=avro \
 -X security.protocol=ssl \
+-X ssl.endpoint.identification.algorithm=none \
 -X ssl.certificate.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-prod.target.com.pem \
 -X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-prod.target.com.pem \
 -X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
@@ -46,6 +49,7 @@ kcat -C -e -b kafka-ttc-app.prod.target.com:9093 -t cc-core-orders-inbound-v3 -s
 
 kcat -C -e -b kafka-ttc-app.prod.target.com:9093 -t cc-orders -s value=avro \
 -X security.protocol=ssl \
+-X ssl.endpoint.identification.algorithm=none \
 -X ssl.certificate.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/bimigrationbatch-prd.target.com.pem \
 -X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/bimigrationbatch-prd.target.com.pem \
 -X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
@@ -56,6 +60,7 @@ Search by time range
 
 kcat -C -e -b kafka-ttc-app.prod.target.com:9093 -t cc-core-orders-inbound-v3 -s value=avro \
 -X security.protocol=ssl \
+-X ssl.endpoint.identification.algorithm=none \
 -X ssl.certificate.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-prod.target.com.pem \
 -X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-prod.target.com.pem \
 -X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
