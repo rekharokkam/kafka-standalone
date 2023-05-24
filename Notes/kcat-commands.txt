@@ -12,6 +12,10 @@ cd -
 brew unlink librdkafka #If you've already installed librdkafka
 brew install librdkafka
 
+OR
+
+You can use librdkafka with librdkafa-2.x.x if you add -X ssl.endpoint.identification.algorithm=none to your kcat
+
 
 Kcat Command to read a message from a topic
 -------------------------------------------
