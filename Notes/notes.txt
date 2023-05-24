@@ -750,8 +750,6 @@ docker run -p 8080:8080 -e KAFKA_BROKERS=kafka-ttc-app.dev.target.com:9092 quay.
 Then open up your browser to http://localhost:8080/
 
 
-
-
 Use any kafka command with this image but only works on the port 9092 as it cannot read the properties file
     docker run wurstmeister/kafka:2.13-2.8.1 kafka-consumer-groups.sh --bootstrap-server kafka-ttc-app.dev.target.com:9092 --group core_ordersv3_dev_group  --describe
 
@@ -759,6 +757,18 @@ OR to reset the offset or to run the acls (I don’t know this yet)
     docker run wurstmeister/kafka:2.13-2.8.1 kafka-acls.sh --bootstrap-server kafka-ttc-app.dev.target.com:9092 --topic sam-violation-input --list
 
 
+Issues with librdkafka version -
+verify that ssl.ca.location is correctly configured or root CA certificates are installed
+
+cd "$(brew --prefix)"/Library/Taps/homebrew/homebrew-core
+git checkout f7d0f40bbc4075177ecf16812fd95951a723a996 -- Formula/librdkafka.rb
+cd -
+brew unlink librdkafka # If you've already installed librdkafka
+brew install librdkafka
+
+OR
+
+You can use librdkafka with librdkafa-2.x.x if you add -X ssl.endpoint.identification.algorithm=none to your kcat
 
 
 
