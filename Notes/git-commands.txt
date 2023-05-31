@@ -1,0 +1,16 @@
+Issues - name to indicate everything going on.
+	- Bugs, enhancements, tasks, ideas
+
+By default git push does not push the tags from local to upstream.
+git push --tags :: pushes the local tags to upstream
+
+git tag <tag_name> <branch>
+
+Git log in a graphical form
+-----------------------------------
+git log -n 30 --oneline --graph --decorate --all
+
+For annotating and adding a tag to an existing commit
+------------------------------------------------------------------------
+git tag -a <tag_name> -m "<tag_message>" <commit_id from git log>
+Ex - git tag -a kafka_streams -m "stable kafka streams" 894f0d3
