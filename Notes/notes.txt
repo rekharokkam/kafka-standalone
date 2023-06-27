@@ -297,7 +297,7 @@ min.insync.replicas = 2 implies there are atleast 2 brokers that are ISR (includ
 min.insync.replicas = 2 is the common setting
 
 If replication factor = 3, min.insync.replicas = 2 and acks = all
-    - producer can only tolerate one broker going down other wise producer will receive an exception on send (NOT_ENOUGH_REPLICAS)
+    - producer can only tolerate one broker going down otherwise producer will receive an exception on send (NOT_ENOUGH_REPLICAS)
 
 For maximum safety, maximum availability - replication factory = 3, min.insync.replicas 2, and acks = all
 

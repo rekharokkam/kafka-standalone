@@ -1,0 +1,46 @@
+kafka-configs
+--------------
+Create the topic :: configured-topic
+kafka-topics --bootstrap-server localhost:9092 --topic configured-topic --partitions 3 --replication-factor 1 --create
+
+describe the topic to check the default config values
+kafka-topics --bootstrap-server localhost:9092 --topic configured-topic --describe
+
+kafka-configs :: command to add/alter the configs on the kafka topic
+
+command to fetch all the dynamic configs
+kafka-configs --bootstrap-server localhost:9092 --entity-type topics --entity-name configured-topic --describe
+
+command to alter the dynamic config
+kafka-configs --bootstrap-server localhost:9092 --entity-type topics --entity-name configured-topic --alter --add-config min.insync.replicas=2
+
+you can also check the additional configuration through topic describe command
+
+command to delete the config
+kafka-configs --bootstrap-server localhost:9092 --entity-type topics --entity-name configured-topic --alter --delete-config min.insync.replicas
+
+Partitions and Segments
+-----------------------
+Topics are made of partitions, partitions are made of segments and files
+each segment will have a range of offsets.
+ex -
+Segment 0:                Segment 1:              Segment 2:             Segment 3:
+Offset 0-957              Offset 958-1675         Offset 1676-2453       Offset 2454 - ?
+
+Position Index 0          Position Index 1        Position Index 2       Position Index 3
+
+Timestamp Index 0         Timestamp Index 1       Timestamp Index 2      Timestamp Index 3
+
+
+Last segment is the active Segment, its being actively written to, so we dont know the end offset on this segment
+At any point in time, there is only one active segment,
+there are 2 important settings for the segment
+log.segment.bytes - default is ~ 1GB, if size exceeds then a new segment will be created closing this segment
+log.segment.ms - default is ~ 1 week, kafka will wait for a min of 1 week before creating a new segment if the current segment does not reach log.segment.bytes
+
+segments have 2 indices
+An offset to position index
+A timestamp to offset index
+
+why should I care about segments?
+

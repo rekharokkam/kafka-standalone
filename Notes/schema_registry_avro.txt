@@ -218,9 +218,9 @@ http://localhost:3030 :: landoop UI there by UI for schema-registry, topics, kaf
 
 Download confluent tools in one of 2 ways
 1) by downloading confluent tools, this approach didnt work for me
-2) running the commands
-     docker pull confluentinc/cp-schema-registry
-     docker run -it --rm --net=host confluentinc/cp-schema-registry bash
+2) running the commands'
+     docker pull confluentinc/cp-schema-registry:latest
+     docker run -it --rm --net=host confluentinc/cp-schema-registry:latest bash
 
 Once inside the container execute the command
     - kafka-avro-console-consumer
@@ -247,18 +247,16 @@ Schemas can be applied to Keys and or values
 
 to access landoop UI - Run docker-compose up and then access the UI :: http://localhost:3030
 
-I created the topic - kafka-topics --bootstrap-server localhost:9092 --topic customer-topic --create --partitions 3 --replication-factor 1
+I created the topic - kafka-topics --bootstrap-server localhost:9092 --topic customer-topic --partitions 3 --replication-factor 1 --create
 
 Avro Console Producer and Console Consumer
 ------------------------------------------
 I created the topic as :: kafka-topics --bootstrap-server localhost:9092 --topic customer-avro-topic --partitions 3 --replication-factor 1 --create
 
-I ran confluent tools image :: docker run -it --rm --net=host confluentinc/cp-schema-registry bash
-
 kafka-avro-console-producer
 ---------------------------
 
-I ran confluent tools image :: docker run -it --rm --net=host confluentinc/cp-schema-registry bash
+I ran confluent tools image :: docker run -it --rm --net=host confluentinc/cp-schema-registry:latest bash
 
 From inside the container I ran ::  kafka-avro-console-producer --bootstrap-server localhost:9092 --topic customer-avro-topic --property schema.registry.url=http://localhost:8081 --property value.schema.id=117
 Then added new records -
