@@ -43,4 +43,17 @@ An offset to position index
 A timestamp to offset index
 
 why should I care about segments?
+---------------------------------
+There are 2 settings related to segmentation
+log.segment.bytes (size, default 1 GB)
+    smaller value of this setting means more segments per partition,
+    so log compaction will happen more often,
+    and kafka will need to keep more files open which might cause the "Too many files open" error
+
+log.segment.ms (time, default 1 week)
+    lesser than a week will result in more segments per partition,
+
+Log cleanup policy
+------------------
+
 
