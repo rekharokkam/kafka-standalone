@@ -23,6 +23,14 @@ Partitions and Segments
 -----------------------
 Topics are made of partitions, partitions are made of segments and files
 each segment will have a range of offsets.
+
+Last segment is the active Segment, its being actively written to, so we dont know the end offset on this segment
+At any point in time, there is only one active segment,
+
+segments have 2 indices
+An offset to position index
+A timestamp to offset index
+
 ex -
 Segment 0:                Segment 1:              Segment 2:             Segment 3:
 Offset 0-957              Offset 958-1675         Offset 1676-2453       Offset 2454 - ?
@@ -31,29 +39,51 @@ Position Index 0          Position Index 1        Position Index 2       Positio
 
 Timestamp Index 0         Timestamp Index 1       Timestamp Index 2      Timestamp Index 3
 
-
-Last segment is the active Segment, its being actively written to, so we dont know the end offset on this segment
-At any point in time, there is only one active segment,
-there are 2 important settings for the segment
-log.segment.bytes - default is ~ 1GB, if size exceeds then a new segment will be created closing this segment
-log.segment.ms - default is ~ 1 week, kafka will wait for a min of 1 week before creating a new segment if the current segment does not reach log.segment.bytes
-
-segments have 2 indices
-An offset to position index
-A timestamp to offset index
-
 why should I care about segments?
 ---------------------------------
 There are 2 settings related to segmentation
 log.segment.bytes (size, default 1 GB)
+    if size exceeds then a new segment will be created closing this segment
     smaller value of this setting means more segments per partition,
     so log compaction will happen more often,
     and kafka will need to keep more files open which might cause the "Too many files open" error
 
 log.segment.ms (time, default 1 week)
+    kafka will wait for a min of 1 week before creating a new segment if the current segment does not reach log.segment.bytes
     lesser than a week will result in more segments per partition,
 
 Log cleanup policy
 ------------------
+Data expires on kafka topic/cluster/broker, this is called log clean up, this is based on cleanup policy
+There are 2 policies
+policy - 1 ::
+    log.cleanup.policy = delete (default settings on all the user topics)
+    Delete based on the age of the data (default is a week)
+    Delete based on max size of log (default is -1 == infinite)
+in any case you have only 1 week's worth of data
+
+policy - 2 ::
+    log.cleanup.policy = compact (default value on the non-user internal topic __consumer_offsets)
+    Delete based on keys of the messages
+    Will delete old duplicate keys after the active segment is committed
+    this provides infinite time and space retention
+
+kafka-topics --bootstrap-server localhost:9092 --topic __consumer_offsets --describe
+Run this command to understand the compaction on __consumer_offsets topic
+
+Log cleanup: Why and When
+-------------------------
+Deleting data from kafka helps
+    - control the size of data on the disk
+    - remove obsolete data
+    - Reduces the maintenance work on kafka cluster
+
+How often log clean up happen
+-----------------------------
+    it triggers whenever segments in a partition are created
+    smaller segments mean more log cleanup
+    log cleanups are resource intensive, need more CPU and RAM resources
+    setting log.cleaner.backoff.ms is the frequency of the log cleaner. it is every 15 seconds
+
 
 
