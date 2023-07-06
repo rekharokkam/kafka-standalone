@@ -62,6 +62,27 @@ policy - 1 ::
     Delete based on max size of log (default is -1 == infinite)
 in any case you have only 1 week's worth of data
 
+    log.retention.hours :: number of hours to keep the data for ~ 168 ~ 1 week. Higher number is higher retention period
+    Higher number means - more disk space
+    Lower number means data will be retained for less time period, if consumers are down for some reason then data is lost
+    (Disk is cheaper so Teachers suggestion is to have higher value, keep data for longer)
+
+    log.retention.minutes ::
+    log.retention.ms ::
+    smaller unit settings has the precedence over the higher unit settings.
+
+    log.retention.bytes :: max bytes of data that can be retained in each partition, by default it is -1 meaning its infinite
+
+    in any partition, old segment will be deleted based on time or space rules, and data will be written to the new segment
+
+    some common settings are:
+    One week of retention ::
+        log.retention.hours = 168 and log.retention.bytes = -1
+    Infinite time retention bounded by 500 MB ::
+        log.retention.ms = -1 and log.retention.bytes=524282000
+
+
+
 policy - 2 ::
     log.cleanup.policy = compact (default value on the non-user internal topic __consumer_offsets)
     Delete based on keys of the messages
@@ -78,12 +99,15 @@ Deleting data from kafka helps
     - remove obsolete data
     - Reduces the maintenance work on kafka cluster
 
-How often log clean up happen
------------------------------
+How often log clean up happens
+------------------------------
     it triggers whenever segments in a partition are created
     smaller segments mean more log cleanup
     log cleanups are resource intensive, need more CPU and RAM resources
     setting log.cleaner.backoff.ms is the frequency of the log cleaner. it is every 15 seconds
+
+Log cleanup policy - delete
+
 
 
 
