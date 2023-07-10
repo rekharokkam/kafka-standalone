@@ -43,54 +43,16 @@ why should I care about segments?
 ---------------------------------
 There are 2 settings related to segmentation
 log.segment.bytes (size, default 1 GB)
+    Max size of a segment.
     if size exceeds then a new segment will be created closing this segment
     smaller value of this setting means more segments per partition,
     so log compaction will happen more often,
     and kafka will need to keep more files open which might cause the "Too many files open" error
 
-log.segment.ms (time, default 1 week)
+log.segment.ms (time, default 1 week/7 days)
+    Max time to wait before closing the current segment
     kafka will wait for a min of 1 week before creating a new segment if the current segment does not reach log.segment.bytes
     lesser than a week will result in more segments per partition,
-
-Log cleanup policy
-------------------
-Data expires on kafka topic/cluster/broker, this is called log clean up, this is based on cleanup policy
-There are 2 policies
-policy - 1 ::
-    log.cleanup.policy = delete (default settings on all the user topics)
-    Delete based on the age of the data (default is a week)
-    Delete based on max size of log (default is -1 == infinite)
-in any case you have only 1 week's worth of data
-
-    log.retention.hours :: number of hours to keep the data for ~ 168 ~ 1 week. Higher number is higher retention period
-    Higher number means - more disk space
-    Lower number means data will be retained for less time period, if consumers are down for some reason then data is lost
-    (Disk is cheaper so Teachers suggestion is to have higher value, keep data for longer)
-
-    log.retention.minutes ::
-    log.retention.ms ::
-    smaller unit settings has the precedence over the higher unit settings.
-
-    log.retention.bytes :: max bytes of data that can be retained in each partition, by default it is -1 meaning its infinite
-
-    in any partition, old segment will be deleted based on time or space rules, and data will be written to the new segment
-
-    some common settings are:
-    One week of retention ::
-        log.retention.hours = 168 and log.retention.bytes = -1
-    Infinite time retention bounded by 500 MB ::
-        log.retention.ms = -1 and log.retention.bytes=524282000
-
-
-
-policy - 2 ::
-    log.cleanup.policy = compact (default value on the non-user internal topic __consumer_offsets)
-    Delete based on keys of the messages
-    Will delete old duplicate keys after the active segment is committed
-    this provides infinite time and space retention
-
-kafka-topics --bootstrap-server localhost:9092 --topic __consumer_offsets --describe
-Run this command to understand the compaction on __consumer_offsets topic
 
 Log cleanup: Why and When
 -------------------------
@@ -106,7 +68,137 @@ How often log clean up happens
     log cleanups are resource intensive, need more CPU and RAM resources
     setting log.cleaner.backoff.ms is the frequency of the log cleaner. it is every 15 seconds
 
-Log cleanup policy - delete
+Log cleanup policy
+------------------
+Data expires on kafka topic/cluster/broker, this is called log clean up, this is based on cleanup policy
+There are 2 policies
+policy - 1 ::
+    log.cleanup.policy = delete (default settings on all the user topics)
+    Delete based on the age of the data (default is a week)
+    Delete based on max size of log (default is -1 == infinite)
+in any case you have only 1 week's worth of data
+
+    log.retention.hours :: number of hours to keep the data for ~ 168 ~ 1 week. Higher number is higher retention period
+    Higher number means - more disk space
+    Lower number means data will be retained for less time period, if consumers are down for some reason then data is lost
+    (Disk is cheaper so Teachers' suggestion is to have higher value, keep data for longer)
+
+    log.retention.minutes ::
+    log.retention.ms ::
+    smaller unit settings has the precedence over the higher unit settings.
+
+    log.retention.bytes :: max bytes of data that can be retained in each partition, by default it is -1 meaning its infinite
+
+    in any partition, old segment will be deleted based on time or space rules, and data will be written to the new segment
+
+    some common settings are:
+    One week of retention ::q
+        log.retention.hours = 168 and log.retention.bytes = -1
+    Infinite time retention bounded by 500 MB ::
+        log.retention.ms = -1 and log.retention.bytes=524282000
+
+policy - 2 ::
+    log.cleanup.policy = compact (default value on the non-user internal topic __consumer_offsets)
+    Delete based on keys of the messages
+    Will delete old duplicate keys after the active segment is committed
+    this provides infinite time and space retention
+
+    Log compaction makes sure your log contains at least the latest value for a specific key within a partition is available
+    Very useful if you just need the SNAPSHOT instead of full history (such as for a data table in a database, where u have the current data but not the history of changes to that particular table/column/row)
+    Idea is to keep only the latest for a key in our log.
+
+    Ex -
+    We have a topic Employee-Salary
+    We want to keep only the most recent salary for our employees
+
+    Segment - 1
+    Offset = 1, Key = John, Message_payload = {"salary": "8000"}
+    Offset = 2, Key = Mark, Message_payload = {"salary": "9000"}
+    Offset = 3, Key = Lisa, Message_payload = {"salary": "9500"}
+
+
+    Segment - 2
+    Offset = 45, Key = Lisa, Message_payload = {"salary": "11000"}
+    Offset = 46, Key = John, Message_payload = {"salary": "10000"}
+
+    When a new segment will be created (Segment creation is determined by the properties) combining both the segments - 1 and 2
+    New Segment = Segment - 3
+    Offset = 2, Key = Mark, Message_payload = {"salary": "9000"}
+    Offset = 45, Key = Lisa, Message_payload = {"salary": "11000"}
+    Offset = 46, Key = John, Message_payload = {"salary": "10000"}
+
+    Log compaction does not change the offsets but deletes the keys when newer values for the same keys is available.
+
+    Log Compaction guarantees
+        Any consumer reading from the latest segment or from the tail end of the log (most current data) will still see
+        all the messages for each key sent to the topic.
+        Ordering of the messages is still maintained, compaction only removes some old messages for a key but does not
+        re-order them meaning offsets are still maintained.
+        Offsets are immutable. Offsets will skip if messages are missing. But they never change.
+        Deleted Messages can still be consumed for some time period defined in delete.retention.ms (default value is 24 hours).
+        Duplicate data can be published, de-duplication happens only after a new segment is created. Consumers will read the data from the tail end.
+        Consumers can still read the duplicate data in the same segment.
+        Log compaction can fail from time to time
+            It is an Optimization and if the compaction thread crashes then compaction fails.
+            Make sure needed memory is assigned to this process.
+            Restart kafka if compaction is broken.
+        Log compaction cannot be triggered through an api for now.
+
+    How Log Compaction works
+        log.cleanup.policy=compact will be impacted by other settings
+        log.segment.ms - default is 1 week / 7 days
+        log.segment.bytes - default 1 GB
+        min.compaction.lag.ms - default 0 - how long to wait before a message can be compacted
+        max.compaction.lag.ms - default 9223372036854775807 - max how long to wait before a message can be compacted,
+        delete.retention.ms - default 24 hours - wait before deleting the data marked for deletion after compacting
+        min.cleanable.dirty.ration - default 0.5 - it'll clean when 50% of the "closed" segment bytes are "dirty" (they possibly have duplicates)
+        higher value means cleaning fewer times but more efficient,
+            lower value means cleaning more often but less efficient
+
+kafka-topics --bootstrap-server localhost:9092 --topic __consumer_offsets --describe
+Run this command to understand the compaction on __consumer_offsets topic
+
+Log compaction Demo
+-------------------
+kafka-topics --bootstrap-server localhost:9092 --topic employee-salary --partitions 1 --replication-factor 1 --create \
+    --config cleanup.policy=compact \
+    --config min.cleanable.dirty.ratio=0.001 \
+    --config segment.ms=5000
+
+5000 = 5 secs
+
+Describe the topic - kafka-topics --bootstrap-server localhost:9092 --topic employee-salary --describe
+
+Create both the producer and the consumer
+-----------------------------------------
+kafka-console-consumer --bootstrap-server localhost:9092 --topic employee-salary --from-beginning --property print.key=true --property key.separator=,
+kafka-console-producer --bootstrap-server localhost:9092 --topic employee-salary  --property parse.key=true --property key.separator=,
+
+produce some messages like
+Patrick, salary:10000
+Lucy, salary:8000
+Bob, salary:1000
+Patrick, salary:20000
+Lucy, salary:30000
+Patrick, salary:30000
+Stephane, salary:10
+
+Stop the current consumer and spin up a new one after a little while, you should ideally see only a few messages as below,
+Bob, salary:20000
+Lucy, salary:30000
+Patrick, 50000
+Stephane, salary:0
+Stephane, salary:10
+
+Only one entry for each key is available now, older messages for the same key is lost.
+Meaning older messages are deleted.
+
+
+cleaning must happen twice for tombstones to be reaped.
+On the first cleaning pass, the tombstone gets a marker that says when it can be deleted (by default 24 hours later),
+any subsequent cleaning pass where that delete marker time has passed is when the tombstone gets reaped.
+
+Each broker has 4 threads dedicated to cleaning in the current broker configuration on most clusters (including the stores cluster).
 
 
 
