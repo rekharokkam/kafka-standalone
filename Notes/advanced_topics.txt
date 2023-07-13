@@ -201,5 +201,21 @@ any subsequent cleaning pass where that delete marker time has passed is when th
 Each broker has 4 threads dedicated to cleaning in the current broker configuration on most clusters (including the stores cluster).
 
 
+unclean.leader.election
+-----------------------
+If all the InSyncReplicas (ISR) become unavailable, but there are a few out of sync replicas available you have the following options
+Wait for an ISR to come back online, topic will be offline until then
+OR
+enable the setting - unclean.leader.election.enable = true (false is the default setting), and start producing to a non-ISR partition.
+
+with this setting availability will be improved BUT there is a risk of data loss as the previous messages on the ISR will be discarded when they become available,
+and they will start the data replication afresh from the new leader.
+This is a very risky setting and good understanding of how it works is needed before enabling this setting.
+What are the use cases for this setting - metrics, log collection, where data loss does not have a big impact.
+Only an ISR can be elected as a leader.
+
+Large messages in Kafka
+-----------------------
+
 
 
