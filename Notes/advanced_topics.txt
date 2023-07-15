@@ -216,6 +216,36 @@ Only an ISR can be elected as a leader.
 
 Large messages in Kafka
 -----------------------
+Kafka has a default message size limit of 1 MB. Larger than 1 MB is considered anti-pattern
+2 approaches for sending large messages -
+    a) Using external storage like - storing message in HDFS, amazon S3, Google Cloud Storage etc and send a reference of that message to Apache Kafka
+    ex - video, archive file, etc
+    Make this file available in some storage like - HDFS, S3, etc,
+    Write custom code to produce and consume to handle this pattern
+
+             Sends                                         Reads
+    Producer -----> Small metadata message -> Kafka Topic <------ Small metadata message <- Consumer
+       |Sends                                                                             Reads|
+    send Large message to HDFS  -> Hadoop HDFS  <------     Retrieves large message from HDFS
+
+
+    b) Increase the message size limit to send more than 10 MB by changing the settings in - broker, Topic, Producer and Consumer
+    Producer -> Topic <- Consumer
+
+    Topic-wise, Kafka-side, set Max message size to 10 MB
+        Broker side: modify message.max.bytes
+        Topic side: modify max.message.bytes
+        Warning: the settings have similar but different name, this is not a typo
+    Broker-wise, set max replication fetch size to 10 MB
+        replica.fetch.max.bytes = 10485880 (in server.properties)
+    Consumer-side, must increase fetch size of the consumer or will crash
+        max.partition.fetch.bytes = 10485880
+    Producer-side, must increase the max request size
+        max.request.size = 10485880
+All these settings together will help in sending large messages in kafka
+
+
+
 
 
 
