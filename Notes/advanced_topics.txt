@@ -244,7 +244,12 @@ Kafka has a default message size limit of 1 MB. Larger than 1 MB is considered a
         max.request.size = 10485880
 All these settings together will help in sending large messages in kafka
 
-
+Installing lz4 locally
+1) git clone git@github.com:lz4/lz4.git
+2) cd lz4
+3) make install
+4) lz4 --help
+5) How I used it :: lz4 -9 ~/Documents/Rekha/docs/Bi/test_lz4.txt
 
 
 
