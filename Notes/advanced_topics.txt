@@ -63,10 +63,14 @@ Deleting data from kafka helps
 
 How often log clean up happens
 ------------------------------
-    it triggers whenever segments in a partition are created
-    smaller segments mean more log cleanup
-    log cleanups are resource intensive, need more CPU and RAM resources
-    setting log.cleaner.backoff.ms is the frequency of the log cleaner. it is every 15 seconds
+    It triggers whenever segments in a partition are created.
+    Smaller segments mean more log cleanup.
+    Log cleanups are resource intensive, need more CPU and RAM resources.
+    Setting log.cleaner.backoff.ms is the frequency of the log cleaner. it is every 15 seconds.
+    Tombstones get deleted when the log cleaner runs.
+    The kafka settings only describe when a value is eligible for being cleaned,
+        not when it is guaranteed to be cleaned (so a minimum time for it to live, not a maximum).
+    log cleanup will delete most duplicates, it doesn’t guarantee that all duplicates will be removed.
 
 Log cleanup policy
 ------------------
