@@ -8,16 +8,19 @@ kafka-topics --bootstrap-server localhost:9092 --topic configured-topic --descri
 
 kafka-configs :: command to add/alter the configs on the kafka topic
 
-command to fetch all the dynamic configs
+command to fetch all the dynamic configs on a topic
 kafka-configs --bootstrap-server localhost:9092 --entity-type topics --entity-name configured-topic --describe
 
-command to alter the dynamic config
+command to alter the dynamic config on a topic
 kafka-configs --bootstrap-server localhost:9092 --entity-type topics --entity-name configured-topic --alter --add-config min.insync.replicas=2
 
 you can also check the additional configuration through topic describe command
 
-command to delete the config
+command to delete the config on a topic
 kafka-configs --bootstrap-server localhost:9092 --entity-type topics --entity-name configured-topic --alter --delete-config min.insync.replicas
+
+command to get all the configs on a broker
+kafka-configs --bootstrap-server kafka-ttc-app.prod.target.com:9092 --broker 1000 --describe --all | grep 'message.max.bytes'
 
 Partitions and Segments
 -----------------------
