@@ -53,7 +53,7 @@ public class WordCountApp {
         kafkaStreams.start();
 
 //        Printing Streams Topology
-        log.info ("streams topology: {}", kafkaStreams.toString());
+//        log.info ("streams topology: {}", kafkaStreams.toString());
 
 //        Graceful Shutdown of KafkaStream
         Runtime.getRuntime().addShutdownHook(new Thread(kafkaStreams::close));

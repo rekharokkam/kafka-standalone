@@ -8,9 +8,7 @@ buildscript {
     }
 
     repositories {
-        gradlePluginPortal()
         mavenCentral()
-        
     }
 }
 
