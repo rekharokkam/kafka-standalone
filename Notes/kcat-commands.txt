@@ -36,6 +36,11 @@ kcat -C -b kafka-ttc-app.dev.target.com:9093 -t cc-orders -s value=avro \
 -X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
 -X ssl.key.password='' -p 4 -o 119 -c 1 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' -r https://schemaregistry.dev.target.com
 
+local broker inside the landoop contianer
+------------------------------------------
+kcat -C -b 127.0.0.1:9092 -t customer-outbound-topic -s value=avro \
+-p 1 -o 3 -c 1 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' \
+-r http://127.0.0.1:8081
 
 prod
 ----
