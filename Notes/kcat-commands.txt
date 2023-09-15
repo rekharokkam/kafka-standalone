@@ -26,7 +26,8 @@ kcat -C -b kafka-ttc-app.dev.target.com:9093 -t cc-core-orders-inbound-v3 -s val
 -X ssl.certificate`.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-dev.target.com.pem \
 -X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-dev.target.com.pem \
 -X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
--X ssl.key.password='' -p 4 -o 119 -c 1 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' -r https://schemaregistry.dev.target.com
+-X ssl.key.password='' -p 4 -o 119 -c 1 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' \
+-r https://schemaregistry.dev.target.com -s key=i -s value=avro
 
 kcat -C -b kafka-ttc-app.dev.target.com:9093 -t cc-orders -s value=avro \
 -X security.protocol=ssl \
@@ -34,7 +35,8 @@ kcat -C -b kafka-ttc-app.dev.target.com:9093 -t cc-orders -s value=avro \
 -X ssl.certificate.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-dev.target.com.pem \
 -X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-dev.target.com.pem \
 -X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
--X ssl.key.password='' -p 4 -o 119 -c 1 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' -r https://schemaregistry.dev.target.com
+-X ssl.key.password='' -p 4 -o 119 -c 1 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' \
+-r https://schemaregistry.dev.target.com -s key=i -s value=avro
 
 local broker inside the landoop contianer
 ------------------------------------------
@@ -54,7 +56,8 @@ kcat -C -e -b kafka-ttc-app.prod.target.com:9093 -t cc-core-orders-inbound-v3 -s
 -X ssl.certificate.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-prod.target.com.pem \
 -X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-prod.target.com.pem \
 -X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
--X ssl.key.password='' -p 4 -o 119 -c 1 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' -r https://schemaregistry.prod.target.com
+-X ssl.key.password='' -p 4 -o 119 -c 1 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' \
+-r https://schemaregistry.prod.target.com -s key=i -s value=avro
 
 kcat -C -e -b kafka-ttc-app.prod.target.com:9093 -t cc-orders -s value=avro \
 -X security.protocol=ssl \
@@ -62,7 +65,8 @@ kcat -C -e -b kafka-ttc-app.prod.target.com:9093 -t cc-orders -s value=avro \
 -X ssl.certificate.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/bimigrationbatch-prd.target.com.pem \
 -X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/bimigrationbatch-prd.target.com.pem \
 -X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
--X ssl.key.password='' -p 0 -o 199879 -c 1 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' -r https://schemaregistry.prod.target.com
+-X ssl.key.password='' -p 0 -o 199879 -c 1 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' \
+-r https://schemaregistry.prod.target.com -s key=i -s value=avro
 
 Search by time range
 --------------------
@@ -73,7 +77,8 @@ kcat -C -e -b kafka-ttc-app.prod.target.com:9093 -t cc-core-orders-inbound-v3 -s
 -X ssl.certificate.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-prod.target.com.pem \
 -X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-prod.target.com.pem \
 -X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
--X ssl.key.password='' -p 4 -o s@1661194800000 -o e@1661281200000 -c 20 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' -r https://schemaregistry.prod.target.com
+-X ssl.key.password='' -p 4 -o s@1661194800000 -o e@1661281200000 -c 20 -f 'Key: %k\nHeaders: %h\nTimeStamp: %T\nPartition: %p\nOffset: %o\nValue: %s\n' \
+-r https://schemaregistry.prod.target.com -s key=i -s value=avro
 
 s@1661194800000 and e@1661281200000 :: represent time in ms, I used the site https://www.epochconverter.com/ to generate the ms.
 use LocalTime in the dropdown
