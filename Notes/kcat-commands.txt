@@ -82,3 +82,15 @@ kcat -C -e -b kafka-ttc-app.prod.target.com:9093 -t cc-core-orders-inbound-v3 -s
 
 s@1661194800000 and e@1661281200000 :: represent time in ms, I used the site https://www.epochconverter.com/ to generate the ms.
 use LocalTime in the dropdown
+
+
+Number of messages on a topic
+-----------------------------
+
+kcat -C -e -ql -b kafka-ttc-app.prod.target.com:9093 -t cc-core-orders-inbound-v3 \
+-X security.protocol=ssl \
+-X ssl.endpoint.identification.algorithm=none \
+-X ssl.certificate.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-prod.target.com.pem \
+-X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-prod.target.com.pem \
+-X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
+-X ssl.key.password='mQf39?G/DF8FHA__N-' | wc -l
