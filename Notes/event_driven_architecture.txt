@@ -1,0 +1,9 @@
+What is an event driven architecture
+    Architecture style that leverages asynchronous processing to trigger and respond to events within the system.
+
+Everything in an event driven architecture starts with an initiating event.
+An event processor is just a service
+
+An event is something that happens in a system,
+
+Class stopped at 15:45
