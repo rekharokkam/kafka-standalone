@@ -26,3 +26,16 @@ Kafka Streams Topology
 to print the streams topology add toString() on the kafkastream object -
  log.info ("streams topology: {}", kafkaStreams.toString());
 WordCountApp.java
+
+
+KStream and Stream
+------------------
+KStream is an abstraction over Stream.
+Unbounded sequence of Structured data. Streams are discreet entries long-running and never ending. Structured data is called -
+Events, Messages, facts. These Stream objects are immutable
+
+KTable
+------
+is a collection of evolving facts
+
+

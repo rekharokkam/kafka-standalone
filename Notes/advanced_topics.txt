@@ -258,6 +258,14 @@ Installing lz4 locally
 4) lz4 --help
 5) How I used it :: lz4 -9 ~/Documents/Rekha/docs/Bi/test_lz4.txt
 
+Good Explanation on why increasing partitions on kafka topic is not recommended
+-------------------------------------------------------------------------------
+"It shouldn't matter because when adding partitions to a compacted topic, 99% of the time you need to clear all data from that topic and re-publish."  For a compacted topic, compaction works within a single partition.  That means if key AAA used to be on partition 0 of a 10 partition topic, it may end on partition 5 if that topic is increased to 16 partitions.  That means that the original message keyed with AAA will never be compacted from that partition. Because ordering matters on a compacted topic, there is no longer any guarantee that a consumer will read the most recent AAA message after the older message, and now you are having a bad day. (edited)
+
+yep, all data on all existing partitions stays there.  There's no magic migration when partitions are added, this is especially bad on compacted topics, but even non-compacted keyed topics (almost all topics should have keys) will likely need to be cleared at the very least, consumers should be notified.
+
+it's almost always correct to clear any existing data when increasing partitions on a topic. kafka topics should never be the source of truth, they should only be materialized views of upstream truth that can be replayed
+
 
 
 

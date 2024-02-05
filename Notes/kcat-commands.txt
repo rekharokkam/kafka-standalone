@@ -94,3 +94,5 @@ kcat -C -e -ql -b kafka-ttc-app.prod.target.com:9093 -t cc-core-orders-inbound-v
 -X ssl.key.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/ccordersv3-prod.target.com.pem \
 -X ssl.ca.location=/Users/z00465g/Documents/Rekha/workspace/kafka_keys/tgt-ca-bundle.crt \
 -X ssl.key.password='mQf39?G/DF8FHA__N-' | wc -l
+
+kcat -C -e -ql -b 127.0.0.1:9092 -t ccustomer-outbound-topic -s value=avro -r http://127.0.0.1:8081 | wc -l
