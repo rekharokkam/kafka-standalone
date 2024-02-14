@@ -48,10 +48,10 @@ public class KafkaAvroProducerV2 {
             public void onCompletion(RecordMetadata metadata, Exception exception) {
 
                 if (exception == null) {
-                    log.info("send is successful");
-                    log.info(metadata.topic());
+//                    log.info("send is successful");
+//                    log.info(metadata.topic());
                 } else {
-                    log.error("There was an exception while sending message to the customer Topic", exception);
+//                    log.error("There was an exception while sending message to the customer Topic", exception);
                 }
             }
         });
