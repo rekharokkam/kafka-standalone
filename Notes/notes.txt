@@ -4,6 +4,7 @@ Chapter - Kafka Theory
 
 Chapter - Starting Kafka
 ------------------------
+brew install kafka
 
 brew services start zookeeper
 

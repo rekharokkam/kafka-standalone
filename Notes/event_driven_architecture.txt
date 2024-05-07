@@ -6,4 +6,3 @@ An event processor is just a service
 
 An event is something that happens in a system,
 
-Class stopped at 15:45
