@@ -1,7 +1,6 @@
 Chapter - Kafka Theory
 ---------------------
 
-
 Chapter - Starting Kafka
 ------------------------
 brew install kafka
@@ -9,7 +8,6 @@ brew install kafka
 brew services start zookeeper
 
 brew services start kafka
-
 
 To have launchd start zookeeper now and restart at login:
   brew services start zookeeper
