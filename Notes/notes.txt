@@ -157,6 +157,20 @@ Another way to run the cli is to run inside the docker container
 Chapter - Kafka Java Programming 101
 ------------------------------------
 
+Kafka producer can follow one of the 3 patterns for producing the message to kafka topic
+1) Fire and forget
+Ex - BasicProducer
+kafkaProducer.send(producerRecord);
+
+2) Synchronoud producer
+ex - BasicProducerWithKey
+  RecordMetadata = kafkaProducerWithKey.send(producerRecord, new MyProducerCallback())
+                    .get();
+
+3) Asynchronous producer - using callback
+ex - BasicProducerWithCallback
+kafkaProducer.send(producerRecord, new MyProducerCallback());
+
 Kafka Producer with Callback
 ----------------------------
 public void onCompletion(RecordMetadata metadata, Exception exception) {

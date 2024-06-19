@@ -6,3 +6,5 @@ An event processor is just a service
 
 An event is something that happens in a system,
 
+Teachers source repos - https://github.com/wmr513/reactive
+https://github.com/wmr513/event-driven-patterns

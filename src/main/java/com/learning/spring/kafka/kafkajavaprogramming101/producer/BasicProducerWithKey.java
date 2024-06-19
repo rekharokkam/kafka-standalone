@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class BasicProducerWithKey {
 
@@ -23,8 +25,12 @@ public class BasicProducerWithKey {
         kafkaProducerProperties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVER);
         kafkaProducerProperties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         kafkaProducerProperties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        kafkaProducerProperties.setProperty(ProducerConfig.ACKS_CONFIG, "all");
+        kafkaProducerProperties.setProperty(ProducerConfig.COMPRESSION_TYPE_CONFIG, "lz4");
+        kafkaProducerProperties.setProperty(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
+        kafkaProducerProperties.setProperty(ProducerConfig.CLIENT_ID_CONFIG, "kafka_standalone");
+        kafkaProducerProperties.setProperty(ProducerConfig.TRANSACTIONAL_ID_CONFIG, UUID.randomUUID().toString());
     }
-
     private void sendMessageWithKey () throws ExecutionException, InterruptedException {
         KafkaProducer <String, String> kafkaProducerWithKey = new KafkaProducer<>(kafkaProducerProperties);
 
@@ -35,9 +41,8 @@ public class BasicProducerWithKey {
             ProducerRecord<String, String> producerRecord =
                     new ProducerRecord<>(TOPIC_NAME, key, i + " : " + MESSAGE_WITH_KEY);
 
-            //asynchronous
-            kafkaProducerWithKey.send(producerRecord, new MyProducerCallback()).
-                    get(); //adding this here will block the .send() to make it synchronous - not recommended for real time
+            RecordMetadata recordMetadata = kafkaProducerWithKey.send(producerRecord, new MyProducerCallback())
+                    .get(); //adding this here will block the .send() to make it synchronous - not recommended for real time
         }
 
         //flush data
